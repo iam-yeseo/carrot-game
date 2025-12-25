@@ -3,16 +3,14 @@
 body {
     background-color: #f0f2f5;
     font-family: 'Suit', sans-serif, -apple-system, BlinkMacSystemFont; 
-    display: flex; justify-content: center; align-items: flex-start; /* 모바일 대응 */
+    display: flex; justify-content: center; align-items: flex-start;
     min-height: 100vh; user-select: none;
-    touch-action: manipulation; /* 더블탭 확대 방지 */
+    touch-action: manipulation;
 }
 
-/* 앱 프레임 (반응형) */
+/* 앱 프레임 */
 .game-container {
-    width: 100%; 
-    max-width: 480px; /* 일정 사이즈 이상 안 커짐 */
-    min-height: 100vh;
+    width: 100%; max-width: 480px; min-height: 100vh;
     background: #fff; display: flex; flex-direction: column;
     box-shadow: 0 0 20px rgba(0,0,0,0.15); position: relative;
 }
@@ -23,6 +21,7 @@ body {
 .clickable-date { cursor: pointer; text-decoration: underline; font-size: 14px; color: #dfe6e9; }
 .action-points { font-size: 14px; color: #f1c40f; cursor: pointer; }
 .money-row { padding: 0 15px 10px; font-size: 18px; font-weight: bold; color: #81ecec; text-align: right; }
+#money-display { cursor: pointer; } /* 클릭 가능 표시 */
 
 .location-tabs { display: flex; }
 .tab-btn { flex: 1; padding: 12px; background: #636e72; color: #b2bec3; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
@@ -41,18 +40,13 @@ body {
 .horse-image { width: 150px; height: 150px; object-fit: contain; margin-bottom: 10px; animation: bounce 3s infinite; }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-/* 이름 및 등급 박스 */
 .name-grade-row { display: flex; justify-content: center; align-items: center; gap: 8px; }
-.grade-box {
-    width: 24px; height: 24px; background: #2d3436; color: #f1c40f;
-    font-weight: bold; border-radius: 4px; display: flex; justify-content: center; align-items: center; font-size: 14px;
-}
+.grade-box { width: 24px; height: 24px; background: #2d3436; color: #f1c40f; font-weight: bold; border-radius: 4px; display: flex; justify-content: center; align-items: center; font-size: 14px; }
 .name-container { display: inline-flex; align-items: center; background: white; padding: 5px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
 #horse-name-display { font-size: 20px; font-weight: bold; color: #2d3436; margin-right: 5px; }
 .edit-icon { font-size: 12px; opacity: 0.5; }
 .bubble { margin-top: 15px; background: white; padding: 10px; border-radius: 10px; font-size: 14px; color: #636e72; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-/* 스탯 */
 .panel-header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; color: #2d3436; }
 .toggle-btn { padding: 5px 10px; background: #74b9ff; color: white; border: none; border-radius: 12px; font-size: 12px; cursor: pointer; }
 .stat-group { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
@@ -63,7 +57,6 @@ body {
 .num-text { width: 40px; text-align: right; font-weight: bold; color: #2d3436; font-size: 12px; }
 #bar-hunger { background: #fdcb6e; } #bar-hygiene { background: #00cec9; } #bar-mood { background: #e84393; } .bar-fill.ability { background: #6c5ce7; }
 
-/* 창고 & 말 슬롯 */
 .stable-inventory-box, .stable-horse-slots { margin-top: 15px; background: #f9f9f9; border-radius: 10px; padding: 10px; }
 h4 { font-size: 14px; color: #636e72; margin-bottom: 8px; }
 .mini-inventory { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -71,11 +64,7 @@ h4 { font-size: 14px; color: #636e72; margin-bottom: 8px; }
 .empty-msg { color: #b2bec3; font-size: 12px; }
 
 .horse-slot-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-.horse-slot {
-    aspect-ratio: 1/1; background: white; border: 2px solid #dfe6e9; border-radius: 8px;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    cursor: pointer; position: relative; font-size: 11px; font-weight: bold; color: #b2bec3;
-}
+.horse-slot { aspect-ratio: 1/1; background: white; border: 2px solid #dfe6e9; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; position: relative; font-size: 11px; font-weight: bold; color: #b2bec3; }
 .horse-slot.active { border-color: #e17055; background: #fff0e6; color: #d35400; }
 .horse-slot.filled { color: #2d3436; }
 .slot-grade { position: absolute; top: 2px; right: 2px; font-size: 9px; background: #2d3436; color: #f1c40f; padding: 1px 3px; border-radius: 3px; }
@@ -87,7 +76,6 @@ h4 { font-size: 14px; color: #636e72; margin-bottom: 8px; }
 .store-tabs { display: flex; margin-bottom: 15px; gap: 10px; }
 .sub-tab { flex: 1; padding: 8px; background: #dfe6e9; border: none; border-radius: 20px; font-weight: bold; color: #636e72; cursor: pointer; }
 .sub-tab.active { background: #6c5ce7; color: white; }
-
 .category-block { margin-bottom: 20px; }
 .category-title { font-size: 16px; font-weight: bold; color: #2d3436; margin-bottom: 10px; border-left: 4px solid #e17055; padding-left: 8px; }
 .shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -95,39 +83,55 @@ h4 { font-size: 14px; color: #636e72; margin-bottom: 8px; }
 .item-name { display: block; font-weight: bold; font-size: 14px; }
 .item-price { color: #e17055; font-weight: bold; font-size: 13px; display: block; margin-bottom: 4px; }
 .item-desc { font-size: 11px; color: #636e72; }
-
-/* 뽑기 UI */
 .gacha-banner { text-align: center; margin-bottom: 15px; background: #a29bfe; color: white; padding: 15px; border-radius: 10px; }
 .gacha-options { display: flex; gap: 10px; margin-bottom: 15px; }
 .gacha-card { flex: 1; background: white; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; }
 .gacha-card.normal { border-color: #b2bec3; }
 .gacha-card.premium { border-color: #e17055; background: #fff0e6; }
-.gacha-card h4 { margin-bottom: 5px; }
 .rate-info { font-size: 11px; color: #636e72; display: block; margin-top: 5px; }
 .rate-table { font-size: 11px; color: #636e72; background: #f1f2f6; padding: 10px; border-radius: 5px; }
 
 /* [돈 벌기] */
 .earn-card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.league-selector select { padding: 10px; font-size: 16px; font-weight: bold; width: 100%; margin-bottom: 10px; border-radius: 5px; border: 1px solid #dfe6e9; }
-.race-info-box { background: #f1f2f6; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 13px; text-align: left; }
 .race-btn { width: 100%; padding: 12px; background: #d63031; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
 .desc { color: #636e72; font-size: 13px; margin: 10px 0; }
+.desc-small { font-size: 11px; color: #b2bec3; margin-bottom: 10px; }
 
+/* 알바 버튼 & 쿨타임 수정 */
 .alba-btn-container { position: relative; margin-bottom: 10px; }
-.alba-btn { width: 100%; padding: 12px; background: #00b894; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
-.alba-btn:disabled { background: #b2bec3; cursor: not-allowed; }
-.cooldown-bar-bg { height: 4px; background: #dfe6e9; border-radius: 2px; margin-top: 5px; overflow: hidden; }
-.cooldown-bar-fill { height: 100%; width: 0%; background: #00cec9; transition: width 0.1s linear; }
+.alba-btn { width: 100%; padding: 12px; background: #00b894; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; z-index: 2; position: relative; }
+.alba-btn:disabled { cursor: not-allowed; }
+.cooldown-bar-bg { height: 6px; background: #dfe6e9; border-radius: 3px; margin-top: 5px; overflow: hidden; }
+/* 쿨타임 바 색상 버튼과 동일하게, Transition 설정 */
+.cooldown-bar-fill { height: 100%; width: 0%; background: #00b894; }
 
 /* 로또 */
 .lottery-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin: 10px 0; }
 .lotto-num { background: #fff; border: 1px solid #ccc; border-radius: 5px; padding: 8px 0; text-align: center; font-weight: bold; cursor: pointer; font-size: 14px; }
 .lotto-num.selected { background: #6c5ce7; color: white; border-color: #6c5ce7; }
 .lottery-btn { width: 100%; padding: 10px; background: #6c5ce7; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+.lottery-btn:disabled { background: #b2bec3; cursor: not-allowed; }
 
-/* [모달] */
+/* 리그 선택 버튼 */
+.league-list-box { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; }
+.league-btn { 
+    padding: 15px; border: 1px solid #dfe6e9; background: white; border-radius: 8px; 
+    text-align: left; cursor: pointer; transition: 0.2s; 
+}
+.league-btn:hover { background: #f1f2f6; }
+.league-btn.disabled { 
+    background: #f5f6fa; color: #b2bec3; cursor: not-allowed; border-color: #eee; 
+}
+.league-btn-title { font-weight: bold; font-size: 16px; display: block; margin-bottom: 4px; }
+.league-btn-info { font-size: 12px; color: #636e72; }
+
+/* [모달 공통] */
 .hidden { display: none !important; }
-#modal-overlay, #alert-overlay, #lotto-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; display: flex; justify-content: center; align-items: center; }
+#modal-overlay, #alert-overlay, #lotto-overlay, #cheat-overlay, #league-overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.5); z-index: 100; 
+    display: flex; justify-content: center; align-items: center; 
+}
 .modal-box, .alert-box { background: white; width: 90%; max-width: 320px; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; }
 
 .qty-control { display: flex; justify-content: center; align-items: center; margin: 15px 0; gap: 10px; }
@@ -136,8 +140,8 @@ h4 { font-size: 14px; color: #636e72; margin-bottom: 8px; }
 
 .modal-btns, .alert-btns { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
 .modal-btns button, .alert-btns button { flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px; }
-.btn-no { background: #b2bec3; color: white; } /* 왼쪽: 아니오 */
-.btn-yes { background: #0984e3; color: white; } /* 오른쪽: 예 */
+.btn-no { background: #b2bec3; color: white; } /* 왼쪽: 아니오/취소 */
+.btn-yes { background: #0984e3; color: white; } /* 오른쪽: 예/구매 */
 
 .modal-item-row { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
 .modal-item-row:hover { background: #f9f9f9; }
