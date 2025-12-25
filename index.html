@@ -69,7 +69,9 @@
 
                 <div class="stable-inventory-box">
                     <h4>🎒 내 가방</h4>
-                    <div id="stable-inventory-list" class="mini-inventory"></div>
+                    <div id="stable-inventory-list" class="mini-inventory">
+                        <span class="empty-msg">비어있음</span>
+                    </div>
                 </div>
             </div>
 
@@ -88,7 +90,7 @@
                         <button id="btn-alba" class="alba-btn" onclick="doAlba()">💰 일하고 돈 받기</button>
                         <div class="cooldown-bar-bg"><div id="alba-cooldown" class="cooldown-bar-fill"></div></div>
                     </div>
-                    <div id="alba-result" class="result-msg"></div>
+                    <div id="alba-result" class="result-msg">버튼을 눌러보세요.</div>
                 </div>
 
                 <div class="earn-card lottery-card">
@@ -103,23 +105,23 @@
                     </div>
 
                     <div id="lottery-waiting-area" class="hidden">
-                        <p>구매 완료! 내일 아침에 결과가 나옵니다.</p>
+                        <p style="font-weight:bold; margin-bottom:10px;">구매 완료! 내일 아침 추첨!</p>
                         <div class="my-numbers" id="my-lotto-nums"></div>
                     </div>
 
                     <div id="lottery-result-area" class="hidden">
-                        <p class="win-title">추첨 결과 발표!</p>
+                        <p class="win-title">🎉 추첨 결과 발표! 🎉</p>
                         <div class="win-numbers" id="win-lotto-nums"></div>
-                        <p id="lotto-rank-msg"></p>
+                        <p id="lotto-rank-msg" style="margin:10px 0; font-weight:bold;"></p>
                         <button id="btn-claim-prize" class="hidden race-btn" onclick="claimLotteryPrize()">🎁 당첨금 수령</button>
                     </div>
                 </div>
 
                 <div class="earn-card race-card">
                     <h3>🏆 그랑프리 H1</h3>
-                    <p class="desc">참가비: 10,000원 / ⚡️4 소모</p>
+                    <p class="desc">참가비: 10,000원 / ⚡️4 소모(올인)</p>
                     <p id="win-prob">우승 확률 계산 중...</p>
-                    <button class="race-btn" onclick="startRace()">🏇 올인하고 참가하기</button>
+                    <button class="race-btn" onclick="startRace()">🏇 참가하기</button>
                     <div id="race-result" class="result-msg hidden"></div>
                 </div>
             </div>
@@ -130,23 +132,25 @@
         <div class="modal-box">
             <h3 id="modal-title">아이템 선택</h3>
             <div id="modal-list" class="modal-list-area"></div>
+            
             <div id="modal-quantity-area" class="hidden">
-                <p id="selected-item-name">선택된 아이템</p>
+                <p id="selected-item-name" style="font-weight:bold; margin-bottom:10px;">아이템명</p>
                 <div class="qty-control">
                     <button onclick="changeQty(-1)">-</button>
                     <span id="qty-display">1</span>
                     <button onclick="changeQty(1)">+</button>
                 </div>
-                <p id="effect-preview" class="preview-text"></p>
+                <p id="effect-preview" class="preview-text">효과 미리보기</p>
                 <button class="confirm-btn" onclick="confirmUseItem()">사용하기</button>
             </div>
+            
             <button class="close-btn" onclick="closeModal()">닫기</button>
         </div>
     </div>
 
     <div id="alert-overlay" class="hidden">
         <div class="alert-box">
-            <p id="alert-msg">메시지</p>
+            <p id="alert-msg">메시지 내용</p>
             <div class="alert-btns" id="alert-btn-group">
                 <button onclick="closeAlert()">확인</button>
             </div>
