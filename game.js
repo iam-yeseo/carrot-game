@@ -1,436 +1,548 @@
-// --- 1. 게임 데이터 및 설정 ---
-const gameData = {
-    day: 1,
-    money: 20000, // 테스트용 넉넉한 초기 자금
-    location: 'stable', // stable, outdoors, racetrack
-    horse: {
-        name: "초코",
-        grade: "C", // 상한선: SS(100), S(90), A(80), B(70), C(60)
-        
-        // 상태 스탯 (마구간용)
-        status: {
-            hunger: 50,  // -20 ~ 120
-            hygiene: 50, // 0 ~ 100
-            mood: 50     // 0 ~ 100
-        },
-        
-        // 기본 능력치 (베이스)
-        baseStats: {
-            stamina: 30,
-            speed: 25,
-            spirit: 20,
-            charm: 15
-        }
-    },
-    inventory: {} // { "item_id": count }
+/* Project: Carrot (v0.2.0)
+    Code Name: carrot
+*/
+
+// --- 1. 데이터 베이스 (아이템 & 설정) ---
+const ITEMS = {
+    // [먹이]
+    "food_sugar": { name: "각설탕", price: 14000, cat: "food", val: 15, desc: "말이 좋아하는 특식", effect: "포만감 +15" },
+    "food_hay": { name: "건초", price: 9500, cat: "food", val: 10, desc: "말이 좋아하는 풀떼기", effect: "포만감 +10" },
+    "food_carrot": { name: "당근", price: 9500, cat: "food", val: 10, desc: "말이 좋아하는 별미", effect: "포만감 +10" },
+    "food_feed": { name: "사료", price: 5000, cat: "food", val: 5, desc: "먹을 수 있으니까 먹는다", effect: "포만감 +5" },
+    
+    // [장난감]
+    "toy_basic": { name: "기본 장난감", price: 5000, cat: "toy", val: 10, desc: "오래 갖고 놀면 질린다.", effect: "기분 +10" },
+    "toy_fun": { name: "재밌는 장난감", price: 9500, cat: "toy", val: 20, desc: "갖고 놀 때마다 재밌다.", effect: "기분 +20" },
+    "toy_magic": { name: "신기한 장난감", price: 99000, cat: "toy", val: "R", desc: "이게 대체 뭐지?", effect: "기분 랜덤 대박?" },
+
+    // [훈련]
+    "train_basic": { name: "기본 훈련도구", price: 5000, cat: "train", target: "stamina", val: 1, desc: "단순해서 외울 듯 싶다.", effect: "체력 +1" },
+    "train_special": { name: "특수 훈련도구", price: 9500, cat: "train", target: "spirit", val: 1, desc: "힘들지만 재미있다.", effect: "기력 +1" },
+    "train_magic": { name: "마법봉", price: 99000, cat: "train", target: "R", val: "R", desc: "요물이다.", effect: "랜덤 스탯 변화" },
+
+    // [케어]
+    "care_comb": { name: "기본 빗", price: 5000, cat: "care", val: 5, desc: "역할에 충실한 빗", effect: "위생 +5" },
+    "care_comb_good": { name: "결 좋은 빗", price: 9500, cat: "care", val: 10, desc: "빗기만 해도 윤기가 좌르르", effect: "위생 +10" },
+    "care_broom": { name: "빗자루", price: 99000, cat: "care", val: "R", desc: "이걸로 날 빗기겠다고?", effect: "위생 랜덤 변화" },
+
+    // [의약품]
+    "med_digest": { name: "홀스활명수", price: 10000, cat: "med", type: "digest", desc: "소화가 빨라진다.", effect: "과식 치료 (배부름 100으로)" },
+    "med_clean": { name: "말을씻자", price: 10000, cat: "med", type: "clean", desc: "꼬질꼬질한 냄새가 사라진다.", effect: "위생 +50" },
+    "med_oneshot": { name: "홀스원샷", price: 10000, cat: "med", type: "oneshot", desc: "차량용이 아니다.", effect: "랜덤 능력치 +5~20" }
 };
 
-// 등급별 능력치 상한선
 const MAX_STATS = { "SS": 100, "S": 90, "A": 80, "B": 70, "C": 60 };
 
-// 아이템 목록 (DB 역할)
-const ITEMS = {
-    // 먹이
-    "food_sugar": { name: "각설탕", price: 14000, type: "food", value: 15, desc: "포만감 +15" },
-    "food_hay": { name: "건초", price: 9500, type: "food", value: 10, desc: "포만감 +10" },
-    "food_carrot": { name: "당근", price: 9500, type: "food", value: 10, desc: "포만감 +10" },
-    "food_feed": { name: "사료", price: 5000, type: "food", value: 5, desc: "포만감 +5" },
-    // 장난감
-    "toy_basic": { name: "기본 장난감", price: 5000, type: "toy", value: 10, desc: "기분 +10 (내구도 10)", maxDurability: 10 },
-    "toy_fun": { name: "재밌는 장난감", price: 9500, type: "toy", value: 20, desc: "기분 +20 (내구도 20)", maxDurability: 20 },
-    "toy_magic": { name: "신기한 장난감", price: 99000, type: "toy_random", desc: "기분 랜덤 대박?" },
-    // 훈련도구
-    "train_basic": { name: "기본 훈련도구", price: 5000, type: "train", stat: "stamina", value: 1, desc: "체력 +1" },
-    "train_special": { name: "특수 훈련도구", price: 9500, type: "train", stat: "spirit", value: 1, desc: "기력 +1" },
-    "train_magic": { name: "마법봉", price: 99000, type: "train_random", desc: "랜덤 스탯 변화" },
-    // 케어도구
-    "care_comb": { name: "기본 빗", price: 5000, type: "care", value: 5, desc: "위생 +5" },
-    "care_comb_good": { name: "결 좋은 빗", price: 9500, type: "care", value: 10, desc: "위생 +10" },
-    "care_magic": { name: "빗자루", price: 99000, type: "care_random", desc: "위생 랜덤 변화" },
-    // 의약품
-    "med_digest": { name: "홀스활명수", price: 10000, type: "med_digest", desc: "과식 치료 (배부름 100으로)" },
-    "med_clean": { name: "말을씻자", price: 10000, type: "med_clean", desc: "위생 +50" },
-    "med_oneshot": { name: "홀스원샷", price: 10000, type: "med_oneshot", desc: "랜덤 능력치 +5~20" }
+// --- 2. 게임 상태 (저장 대상) ---
+let gameData = {
+    time: {
+        day: 1,
+        phase: "am", // 'am' or 'pm'
+        actions: 4
+    },
+    alba: {
+        count: 0,
+        limit: 30
+    },
+    money: 100000,
+    horse: {
+        name: "초코",
+        grade: "C",
+        status: { hunger: 50, hygiene: 50, mood: 50 },
+        baseStats: { stamina: 30, speed: 25, spirit: 20, charm: 15 }
+    },
+    inventory: {
+        "food_feed": 10,
+        "toy_basic": 5,
+        "train_basic": 5
+    }
 };
 
-// --- 2. 핵심 로직: 스탯 계산 및 컨디션 ---
+// --- 3. 초기화 및 저장 시스템 ---
 
-function getConditionData() {
+function initGame() {
+    loadGame(); // 저장된 데이터 불러오기
+    renderStore(); // 상점 그리기
+    updateUI(); // 화면 갱신
+}
+
+function saveGame() {
+    localStorage.setItem("carrot_save_v2", JSON.stringify(gameData));
+}
+
+function loadGame() {
+    const saved = localStorage.getItem("carrot_save_v2");
+    if (saved) {
+        gameData = JSON.parse(saved);
+    } else {
+        // 첫 시작
+        customAlert("Project Carrot v0.2.0에 오신 것을 환영합니다!<br>신규 정착 지원금이 지급되었습니다.");
+    }
+}
+
+function resetGame() {
+    confirmModal("데이터를 초기화하고 1일차로 돌아가시겠습니까?", () => {
+        localStorage.removeItem("carrot_save_v2");
+        location.reload();
+    });
+}
+
+// --- 4. 시간 및 행동 시스템 ---
+
+function useAction(cost = 1) {
+    if (gameData.time.actions < cost) {
+        customAlert("행동력이 부족합니다!<br>다음 시간대로 넘어갑니다.");
+        nextPhase();
+        return false;
+    }
+    gameData.time.actions -= cost;
+    
+    // 행동력 0이면 자동 턴 넘김
+    if (gameData.time.actions <= 0) {
+        setTimeout(() => {
+            customAlert("모든 행동력을 소모했습니다.<br>시간이 흐릅니다.");
+            nextPhase();
+        }, 500); // 약간의 딜레이
+    }
+    
+    saveGame();
+    return true;
+}
+
+function nextPhase() {
+    // 알바 횟수 초기화
+    gameData.alba.count = 0;
+    gameData.time.actions = 4; // 행동력 리필
+
+    if (gameData.time.phase === "am") {
+        gameData.time.phase = "pm";
+    } else {
+        gameData.time.phase = "am";
+        gameData.time.day++;
+        dailyUpdate(); // 하루 지날 때 패시브 효과 (배고픔 등)
+    }
+    
+    updateUI();
+    saveGame();
+}
+
+function dailyUpdate() {
+    // 하루가 지날 때 자연 감소
     const s = gameData.horse.status;
+    s.hunger -= 10;
+    s.hygiene -= 10;
+    s.mood -= 10;
     
-    // 1. 포만감 상태 판정
-    let hungerState = "";
-    let hungerMod = 0; // % 단위
-    if (s.hunger <= -1) { hungerState = "굶주림"; hungerMod = -50; }
-    else if (s.hunger <= 10) { hungerState = "매우 배고픔"; hungerMod = -10; }
-    else if (s.hunger <= 30) { hungerState = "배고픔"; hungerMod = -5; }
-    else if (s.hunger <= 50) { hungerState = "약간 배고픔"; hungerMod = 0; }
-    else if (s.hunger <= 70) { hungerState = "약간 배부름"; hungerMod = 5; }
-    else if (s.hunger <= 100) { hungerState = "배부름"; hungerMod = 10; }
-    else { hungerState = "배 터짐"; hungerMod = -25; }
-
-    // 2. 기분 상태 판정
-    let moodState = "";
-    let moodMod = 0;
-    if (s.mood <= 20) { moodState = "우울함"; moodMod = -10; }
-    else if (s.mood <= 40) { moodState = "슬픔"; moodMod = -5; }
-    else if (s.mood <= 60) { moodState = "무난함"; moodMod = 0; }
-    else if (s.mood <= 80) { moodState = "기분 좋음"; moodMod = 5; }
-    else { moodState = "행복함"; moodMod = 10; }
-
-    // 3. 컨디션 (종합) 계산: (포만감+위생+기분) / 3
-    let conditionVal = (s.hunger + s.hygiene + s.mood) / 3;
-    let conditionState = "";
-    let conditionMod = 0; // 추가 너프/버프
-    if (conditionVal <= 20) { conditionState = "매우 나쁨"; conditionMod = -10; }
-    else if (conditionVal <= 40) { conditionState = "나쁨"; conditionMod = -5; }
-    else if (conditionVal <= 60) { conditionState = "보통"; conditionMod = 0; }
-    else if (conditionVal <= 80) { conditionState = "좋음"; conditionMod = 5; }
-    else { conditionState = "매우 좋음"; conditionMod = 10; }
-
-    // 총 변동률 (합연산)
-    let totalMod = hungerMod + moodMod + conditionMod;
-
-    return { hungerState, moodState, conditionState, totalMod };
+    // 범위 제한
+    s.hygiene = Math.max(0, s.hygiene);
+    s.mood = Math.max(0, s.mood);
 }
 
-function getEffectiveStats() {
-    const { totalMod } = getConditionData();
-    const base = gameData.horse.baseStats;
-    
-    // 비율 적용 함수 (소수점 반올림)
-    const apply = (val) => Math.floor(val * (1 + totalMod / 100));
 
-    return {
-        stamina: apply(base.stamina),
-        speed: apply(base.speed),
-        spirit: apply(base.spirit),
-        charm: apply(base.charm),
-        modifierPercent: totalMod
-    };
-}
-
-// --- 3. UI 업데이트 ---
+// --- 5. UI 업데이트 및 로직 ---
 
 function updateUI() {
-    // 상단바
-    document.getElementById("day-display").innerText = gameData.day + "일차";
+    // 1. 상단 정보
+    const phaseText = gameData.time.phase === "am" ? "오전" : "오후";
+    document.getElementById("date-display").innerText = `${gameData.time.day}일차 ${phaseText}`;
+    
+    let bolt = "";
+    for(let i=0; i<gameData.time.actions; i++) bolt += "⚡️";
+    document.getElementById("action-points").innerText = bolt;
+    
     document.getElementById("money-display").innerText = gameData.money.toLocaleString() + " 원";
 
-    // 스탯 패널
-    const status = gameData.horse.status;
-    const condData = getConditionData();
-    const effStats = getEffectiveStats();
+    // 2. 마구간 정보
+    document.getElementById("horse-name-display").innerText = gameData.horse.name;
+    document.getElementById("panel-title").innerText = `${gameData.horse.name}의 ${isStatViewMode ? '능력치' : '상태'}`;
 
-    // 상태 바 업데이트 (색상이나 너비)
-    document.getElementById("bar-hunger").style.width = Math.max(0, Math.min(100, status.hunger)) + "%";
-    document.getElementById("bar-hygiene").style.width = status.hygiene + "%";
-    document.getElementById("bar-mood").style.width = status.mood + "%";
-    document.getElementById("val-condition").innerText = condData.conditionState;
-
-    // 능력치 업데이트 (버프/너프 색상 처리)
-    const statKeys = ["stamina", "speed", "spirit", "charm"];
-    statKeys.forEach(key => {
-        const el = document.getElementById("val-" + key);
-        const baseVal = gameData.horse.baseStats[key];
-        const effVal = effStats[key];
-        el.innerText = effVal;
-
-        // 색상 클래스 초기화
-        el.className = ""; 
-        if (effVal > baseVal) el.classList.add("buff");
-        else if (effVal < baseVal) el.classList.add("nerf");
-    });
-    
-    // 경마장 확률 미리보기
-    updateRaceProbUI(effStats);
-}
-
-// 스탯 보기 전환 토글
-let isStatViewMode = false; // false: 상태(Condition), true: 능력치(Ability)
-function toggleStatView() {
-    // 장소에 따른 강제 설정이 우선이지만, 유저가 토글 누르면 바뀜
-    isStatViewMode = !isStatViewMode;
-    renderStatView();
-}
-
-function renderStatView() {
-    const btnText = document.getElementById("stat-view-mode");
-    const divStatus = document.getElementById("stat-status");
-    const divAbility = document.getElementById("stat-ability");
-
-    if (isStatViewMode) {
-        btnText.innerText = "능력치 보기";
-        divStatus.classList.add("hidden");
-        divAbility.classList.remove("hidden");
-    } else {
-        btnText.innerText = "상태 보기";
-        divStatus.classList.remove("hidden");
-        divAbility.classList.add("hidden");
-    }
-}
-
-// 장소 변경
-function changeLocation(loc) {
-    gameData.location = loc;
-    
-    // 탭 스타일
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('btn-' + loc).classList.add('active');
-
-    // 화면 전환
-    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + loc).classList.add('active');
-
-    // 장소별 기본 스탯 뷰 설정
-    if (loc === 'stable') {
-        isStatViewMode = false; // 마구간은 상태 위주
-        showMessage("집이 최고야!");
-    } else {
-        isStatViewMode = true; // 밖에서는 능력치 위주
-        if (loc === 'outdoors') {
-            renderShop();
-            showMessage("무엇을 살까?");
-        } else {
-            showMessage("떨린다... 우승할 수 있을까?");
-        }
-    }
-    renderStatView();
-}
-
-function showMessage(msg) {
-    document.getElementById("message-bubble").innerText = msg;
-}
-
-// --- 4. 상점 및 인벤토리 시스템 ---
-
-function renderShop() {
-    const list = document.getElementById("shop-list");
-    list.innerHTML = "";
-    for (let key in ITEMS) {
-        const item = ITEMS[key];
-        const div = document.createElement("div");
-        div.className = "item-card";
-        div.innerHTML = `
-            <span class="item-name">${item.name}</span>
-            <span class="item-price">${item.price.toLocaleString()}원</span><br>
-            <span style="color:#7f8c8d">${item.desc}</span>
-        `;
-        div.onclick = () => buyItem(key);
-        list.appendChild(div);
-    }
-}
-
-function buyItem(key) {
-    const item = ITEMS[key];
-    if (gameData.money < item.price) {
-        alert("돈이 부족합니다!");
-        return;
-    }
-    
-    // 인벤토리 개수 체크 (99개 제한)
-    const currentCount = gameData.inventory[key] || 0;
-    if (currentCount >= 99) {
-        alert("더 이상 소지할 수 없습니다.");
-        return;
-    }
-
-    gameData.money -= item.price;
-    gameData.inventory[key] = currentCount + 1;
-    updateUI();
-    renderInventory(); // 인벤토리 갱신
-    alert(`${item.name} 구매 완료!`);
-}
-
-function renderInventory() {
-    const list = document.getElementById("inventory-list");
-    list.innerHTML = "";
-    
-    if (Object.keys(gameData.inventory).length === 0) {
-        list.innerHTML = '<div class="empty-msg">아이템이 없습니다.</div>';
-        return;
-    }
-
-    for (let key in gameData.inventory) {
-        if (gameData.inventory[key] > 0) {
-            const item = ITEMS[key];
-            const div = document.createElement("div");
-            div.className = "item-card";
-            div.innerHTML = `
-                <span class="item-name">${item.name}</span>
-                <span class="item-count">x${gameData.inventory[key]}</span><br>
-                <span style="color:#7f8c8d">${item.desc}</span>
-            `;
-            div.onclick = () => useItem(key);
-            list.appendChild(div);
-        }
-    }
-}
-
-function useItem(key) {
-    if (gameData.location !== 'stable') {
-        alert("아이템은 마구간에서만 사용할 수 있습니다.");
-        return;
-    }
-
-    const item = ITEMS[key];
+    // 상태 바 & 텍스트
     const s = gameData.horse.status;
-    const base = gameData.horse.baseStats;
+    updateBar("hunger", s.hunger, 100);
+    updateBar("hygiene", s.hygiene, 100);
+    updateBar("mood", s.mood, 100);
+    
+    // 컨디션 계산
+    const condVal = (s.hunger + s.hygiene + s.mood) / 3;
+    let condText = "보통";
+    if (condVal > 80) condText = "최고 좋음";
+    else if (condVal > 60) condText = "좋음";
+    else if (condVal < 40) condText = "나쁨";
+    else if (condVal < 20) condText = "최악";
+    document.getElementById("val-condition").innerText = condText;
 
-    // 아이템 효과 로직
-    let used = true;
+    // 능력치 업데이트
+    const b = gameData.horse.baseStats;
+    updateBar("stamina", b.stamina, MAX_STATS[gameData.horse.grade], true);
+    updateBar("speed", b.speed, MAX_STATS[gameData.horse.grade], true);
+    updateBar("spirit", b.spirit, MAX_STATS[gameData.horse.grade], true);
+    updateBar("charm", b.charm, MAX_STATS[gameData.horse.grade], true);
+
+    // 알바 횟수
+    document.getElementById("alba-count").innerText = 30 - gameData.alba.count;
+    
+    // 우승 확률 미리보기
+    let prob = 1 + (b.stamina*0.1 + b.spirit*0.1 + b.speed*0.2 + b.charm*0.05);
+    document.getElementById("win-prob").innerText = `예상 우승 확률: ${prob.toFixed(1)}%`;
+}
+
+function updateBar(id, val, max, isAbility = false) {
+    const bar = document.getElementById(`bar-${id}`);
+    const txt = document.getElementById(`text-${id}`);
+    
+    let percent = (val / max) * 100;
+    if (percent > 100) percent = 100;
+    if (percent < 0) percent = 0;
+    
+    bar.style.width = percent + "%";
+    txt.innerText = val + (isAbility ? `/${max}` : "");
+}
+
+// 스탯 뷰 토글
+let isStatViewMode = false;
+function toggleStatView() {
+    isStatViewMode = !isStatViewMode;
+    const sDiv = document.getElementById("stat-status");
+    const aDiv = document.getElementById("stat-ability");
+    
+    if (isStatViewMode) {
+        sDiv.classList.add("hidden");
+        aDiv.classList.remove("hidden");
+    } else {
+        sDiv.classList.remove("hidden");
+        aDiv.classList.add("hidden");
+    }
+    updateUI();
+}
+
+function changeName() {
+    const newName = prompt("말의 새로운 이름을 지어주세요:", gameData.horse.name);
+    if (newName && newName.length > 0) {
+        gameData.horse.name = newName;
+        updateUI();
+        saveGame();
+    }
+}
+
+function changeLocation(loc) {
+    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+    document.getElementById(`view-${loc}`).classList.add('active');
+    
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(`btn-${loc}`).classList.add('active');
+}
+
+
+// --- 6. 상점 시스템 ---
+
+function renderStore() {
+    const container = document.getElementById("shop-container");
+    container.innerHTML = "";
+    
+    const categories = {
+        "food": "🥕 먹이",
+        "toy": "🧸 장난감",
+        "train": "🏋️ 훈련도구",
+        "care": "🧹 케어도구",
+        "med": "💊 의약품"
+    };
+
+    for (let catKey in categories) {
+        // 카테고리 헤더
+        const catDiv = document.createElement("div");
+        catDiv.className = "category-block";
+        catDiv.innerHTML = `<div class="category-title">${categories[catKey]}</div>`;
+        
+        // 아이템 그리드
+        const grid = document.createElement("div");
+        grid.className = "shop-grid";
+        
+        // 해당 카테고리 아이템 필터링
+        for (let itemId in ITEMS) {
+            if (ITEMS[itemId].cat === catKey) {
+                const item = ITEMS[itemId];
+                const card = document.createElement("div");
+                card.className = "item-card";
+                card.innerHTML = `
+                    <div class="info-btn" onclick="event.stopPropagation(); toggleInfo(this)">i</div>
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-price">${item.price.toLocaleString()}원</span>
+                    <span class="item-desc">${item.desc}</span>
+                    <span class="item-effect">${item.effect}</span>
+                `;
+                card.onclick = () => tryBuyItem(itemId);
+                grid.appendChild(card);
+            }
+        }
+        catDiv.appendChild(grid);
+        container.appendChild(catDiv);
+    }
+}
+
+function toggleInfo(btn) {
+    const card = btn.parentElement;
+    card.classList.toggle("show-effect");
+}
+
+function tryBuyItem(itemId) {
+    const item = ITEMS[itemId];
+    confirmModal(`[${item.name}]<br>${item.price.toLocaleString()}원을 지불하고 구매하시겠습니까?`, () => {
+        if (gameData.money >= item.price) {
+            gameData.money -= item.price;
+            gameData.inventory[itemId] = (gameData.inventory[itemId] || 0) + 1;
+            customAlert(`${item.name} 구매 완료!`);
+            updateUI();
+            saveGame();
+        } else {
+            customAlert("돈이 부족합니다!");
+        }
+    });
+}
+
+
+// --- 7. 마구간 아이템 사용 시스템 (모달) ---
+
+let selectedItemKey = null;
+let selectedQty = 1;
+
+function openItemModal(category) {
+    const modalList = document.getElementById("modal-list");
+    const modalTitle = document.getElementById("modal-title");
+    modalList.innerHTML = "";
+    
+    // 카테고리별 인벤토리 필터링
+    let hasItem = false;
+    for (let key in gameData.inventory) {
+        if (gameData.inventory[key] > 0 && ITEMS[key].cat === category) {
+            hasItem = true;
+            const item = ITEMS[key];
+            const row = document.createElement("div");
+            row.className = "modal-item-row";
+            row.innerHTML = `<span>${item.name}</span> <span>x${gameData.inventory[key]}</span>`;
+            row.onclick = () => selectItemInModal(key);
+            modalList.appendChild(row);
+        }
+    }
+
+    if (!hasItem) {
+        modalList.innerHTML = "<div style='text-align:center; padding:20px; color:#999'>아이템이 없습니다.</div>";
+    }
+
+    document.getElementById("modal-quantity-area").classList.add("hidden");
+    document.getElementById("modal-overlay").classList.remove("hidden");
+    
+    // 제목 설정
+    const titles = { food: "먹이 주기", toy: "놀아주기", train: "훈련하기", care: "관리하기" };
+    modalTitle.innerText = titles[category];
+}
+
+function selectItemInModal(key) {
+    selectedItemKey = key;
+    selectedQty = 1;
+    const item = ITEMS[key];
+    const maxPoss = Math.min(5, gameData.inventory[key]);
+    
+    document.getElementById("selected-item-name").innerText = item.name;
+    document.getElementById("modal-quantity-area").classList.remove("hidden");
+    updateQtyUI(maxPoss);
+}
+
+function changeQty(delta) {
+    const maxPoss = Math.min(5, gameData.inventory[selectedItemKey]);
+    selectedQty += delta;
+    if (selectedQty < 1) selectedQty = 1;
+    if (selectedQty > maxPoss) selectedQty = maxPoss;
+    updateQtyUI(maxPoss);
+}
+
+function updateQtyUI(max) {
+    document.getElementById("qty-display").innerText = selectedQty;
+    const item = ITEMS[selectedItemKey];
+    
+    // 효과 미리보기 계산
+    let effectText = "";
+    if (typeof item.val === "number") {
+        effectText = `예상 효과: 수치 +${item.val * selectedQty}`;
+    } else {
+        effectText = `예상 효과: 랜덤`;
+    }
+    document.getElementById("effect-preview").innerText = effectText;
+}
+
+function confirmUseItem() {
+    // 행동력 소모 체크 (약품 제외)
+    const item = ITEMS[selectedItemKey];
+    if (item.cat !== 'med' && gameData.time.actions < 1) {
+        customAlert("행동력이 부족합니다!");
+        return;
+    }
+
+    closeModal(); // 모달 닫기
+    
+    // 실제 효과 적용
+    const totalVal = (typeof item.val === "number") ? item.val * selectedQty : 0;
     let msg = "";
 
     // 1. 먹이
-    if (item.type === "food") {
-        if (s.hunger > 100) { alert("배가 불러서 못 먹어요!"); return; } // 과식 방지
-        s.hunger += item.value;
-        msg = "냠냠! 맛있다!";
-    }
+    if (item.cat === "food") {
+        gameData.horse.status.hunger += totalVal;
+        msg = `냠냠! 포만감이 ${totalVal} 올랐어!`;
+    } 
     // 2. 장난감
-    else if (item.type === "toy") {
-        s.mood = Math.min(100, s.mood + item.value);
-        msg = "우와 재밌다!";
-    }
-    else if (item.type === "toy_random") {
-        // 신기한 장난감 (-50 ~ +100)
-        let val = Math.floor(Math.random() * 151) - 50; 
-        s.mood = Math.min(100, Math.max(0, s.mood + val));
-        msg = val > 0 ? "대박! 너무 재밌어!" : "음... 별로야.";
-    }
-    // 3. 훈련도구
-    else if (item.type === "train") {
-        base[item.stat] = Math.min(MAX_STATS[gameData.horse.grade], base[item.stat] + item.value);
-        msg = "훈련 완료!";
-    }
-    else if (item.type === "train_random") {
-        // 마법봉: 랜덤 스탯 변동
-        const stats = ["stamina", "speed", "spirit", "charm"];
-        const target = stats[Math.floor(Math.random() * stats.length)];
-        const val = Math.floor(Math.random() * 71) - 20; // -20 ~ 50
-        base[target] = Math.max(0, Math.min(MAX_STATS[gameData.horse.grade], base[target] + val));
-        msg = `마법봉 휘두르기! ${target} 수치가 변했다!`;
-    }
-    // 4. 케어도구
-    else if (item.type === "care") {
-        s.hygiene = Math.min(100, s.hygiene + item.value);
-        msg = "깔끔해졌어!";
-    }
-    else if (item.type === "care_random") {
-        // 빗자루
-        let val = Math.floor(Math.random() * 71) - 20; 
-        s.hygiene += val;
-        if(s.hygiene < 0) {
-            s.mood += val; // 위생 마이너스면 기분도 나빠짐
-            s.hygiene = 0;
+    else if (item.cat === "toy") {
+        if (item.val === "R") { // 신기한 장난감
+            const rand = Math.floor(Math.random()*151) - 50;
+            gameData.horse.status.mood += rand;
+            msg = `기분이 ${rand}만큼 변했어!`;
+        } else {
+            gameData.horse.status.mood += totalVal;
+            msg = `재밌다! 기분이 ${totalVal} 올랐어!`;
         }
-        s.hygiene = Math.min(100, s.hygiene);
-        msg = "빗자루질 쓱싹쓱싹";
     }
-    // 5. 의약품
-    else if (item.type === "med_digest") {
-        if (s.hunger <= 100) { alert("소화제가 필요 없어요."); return; }
-        s.hunger = 100;
-        msg = "속이 편안해졌어.";
+    // 3. 훈련
+    else if (item.cat === "train") {
+        if (item.val === "R") { // 마법봉
+            const stats = ["stamina", "speed", "spirit", "charm"];
+            const target = stats[Math.floor(Math.random()*4)];
+            const rand = Math.floor(Math.random()*71) - 20;
+            gameData.horse.baseStats[target] = Math.min(MAX_STATS[gameData.horse.grade], Math.max(0, gameData.horse.baseStats[target] + rand));
+            msg = `마법봉 효과! ${target} 수치가 변했다!`;
+        } else {
+            const stat = item.target;
+            gameData.horse.baseStats[stat] = Math.min(MAX_STATS[gameData.horse.grade], gameData.horse.baseStats[stat] + totalVal);
+            msg = `열심히 훈련해서 능력치가 올랐어!`;
+        }
     }
-    else if (item.type === "med_clean") {
-        s.hygiene = Math.min(100, s.hygiene + 50);
-        msg = "반짝반짝해졌어!";
+    // 4. 케어
+    else if (item.cat === "care") {
+        if (item.val === "R") { // 빗자루
+             const rand = Math.floor(Math.random()*71) - 20;
+             gameData.horse.status.hygiene += rand;
+             msg = "빗자루질을 했더니...";
+        } else {
+            gameData.horse.status.hygiene += totalVal;
+            msg = `깔끔해졌다! 위생 +${totalVal}`;
+        }
     }
-    else if (item.type === "med_oneshot") {
-        const stats = ["stamina", "speed", "spirit", "charm"];
-        const target = stats[Math.floor(Math.random() * stats.length)];
-        const val = Math.floor(Math.random() * 16) + 5; // 5~20
-        base[target] = Math.min(MAX_STATS[gameData.horse.grade], base[target] + val);
-        msg = `힘이 솟는다! ${target} +${val}`;
+    // 5. 의약품 (행동력 소모 X)
+    else if (item.cat === "med") {
+        if (item.type === "digest") gameData.horse.status.hunger = 100;
+        else if (item.type === "clean") gameData.horse.status.hygiene += 50;
+        else if (item.type === "oneshot") {
+             const stats = ["stamina", "speed", "spirit", "charm"];
+             const target = stats[Math.floor(Math.random()*4)];
+             gameData.horse.baseStats[target] += (Math.floor(Math.random()*16)+5);
+        }
+        msg = "약을 사용했습니다.";
     }
 
-    if (used) {
-        gameData.inventory[key]--;
-        if (gameData.inventory[key] <= 0) delete gameData.inventory[key];
-        showMessage(msg);
-        updateUI();
-        renderInventory();
-    }
+    // 아이템 차감
+    gameData.inventory[selectedItemKey] -= selectedQty;
+    if (gameData.inventory[selectedItemKey] <= 0) delete gameData.inventory[selectedItemKey];
+
+    // 행동력 차감 (의약품 제외)
+    if (item.cat !== 'med') useAction(1);
+    
+    customAlert(msg);
+    updateUI();
+    saveGame();
+}
+
+function closeModal() {
+    document.getElementById("modal-overlay").classList.add("hidden");
 }
 
 
-// --- 5. 경마 시스템 ---
+// --- 8. 돈 벌기 (알바 & 경마) ---
 
-function updateRaceProbUI(effStats) {
-    // 확률 계산: 1% + 체력10% + 기력10% + 속도20% + 매력5%
-    let prob = 1 + (effStats.stamina * 0.1) + (effStats.spirit * 0.1) + (effStats.speed * 0.2) + (effStats.charm * 0.05);
-    // UI에는 최대 100%까지만 표시
-    document.getElementById("win-prob").innerText = "예상 우승 확률: " + prob.toFixed(1) + "%";
+function doAlba() {
+    if (gameData.alba.count >= gameData.alba.limit) {
+        customAlert("오늘은 더 이상 알바를 할 수 없습니다.<br>(다음 시간대까지 대기)");
+        return;
+    }
+
+    gameData.alba.count++;
+    
+    // 확률 로직 (1원이 많이 나오게)
+    // 1~1000원: 90%, 1000~5000원: 9%, 5000~10000원: 1%
+    let earned = 0;
+    const r = Math.random() * 100;
+    
+    if (r < 90) { // 90% 확률
+        earned = Math.floor(Math.random() * 1000) + 1;
+    } else if (r < 99) { // 9% 확률
+        earned = Math.floor(Math.random() * 4000) + 1001;
+    } else { // 1% 확률
+        earned = Math.floor(Math.random() * 5000) + 5001;
+    }
+
+    gameData.money += earned;
+    document.getElementById("alba-result").innerText = `알바비 ${earned.toLocaleString()}원을 벌었습니다!`;
+    updateUI();
+    saveGame();
 }
 
 function startRace() {
-    if (gameData.money < 10000) {
-        alert("참가비(10,000원)가 부족합니다.");
-        return;
-    }
+    if (gameData.money < 10000) { customAlert("참가비가 부족합니다."); return; }
     
-    // 조건 체크 (배부름 101~120 or 매우 나쁨 상태 등)
-    const cond = getConditionData();
-    if (gameData.horse.status.hunger > 100) { alert("배가 너무 불러서 뛸 수 없어요!"); return; }
-    if (cond.conditionState === "매우 나쁨") { alert("컨디션 최악이라 출전 불가!"); return; }
+    confirmModal("참가비 10,000원을 내고 대회에 참가하시겠습니까?<br>(행동력 ⚡️1 소모)", () => {
+         if (!useAction(1)) return; // 행동력 체크 및 소모
 
-    gameData.money -= 10000;
-    
-    const effStats = getEffectiveStats();
-    let winProb = 1 + (effStats.stamina * 0.1) + (effStats.spirit * 0.1) + (effStats.speed * 0.2) + (effStats.charm * 0.05);
-    
-    // 경주 결과 시뮬레이션
-    let rank = 1;
-    let isFinished = false;
-
-    // 1등부터 8등까지 순차 체크
-    while (!isFinished && rank <= 8) {
-        let roll = Math.random() * 100; // 0 ~ 99.99
-        if (roll < winProb) {
-            isFinished = true; // 해당 등수 당첨
-        } else {
-            rank++;
-            winProb += 1; // 실패할 때마다 다음 등수 확률 1% 증가 (기획 반영)
-        }
-    }
-    if (rank > 8) rank = 8; // 8등 밖은 8등 처리
-
-    // 상금 지급
-    const prizes = [0, 1000000, 500000, 100000, 50000, 10000, 5000, 3000, 1000];
-    const prize = prizes[rank];
-    gameData.money += prize;
-
-    // 결과 표시
-    const resDiv = document.getElementById("race-result");
-    resDiv.classList.remove("hidden");
-    resDiv.innerHTML = `${rank}등!<br>상금: ${prize.toLocaleString()}원 획득!`;
-    
-    updateUI();
+         gameData.money -= 10000;
+         
+         // 승패 로직 (이전과 동일)
+         const b = gameData.horse.baseStats;
+         let winProb = 1 + (b.stamina*0.1 + b.spirit*0.1 + b.speed*0.2 + b.charm*0.05);
+         let rank = 1;
+         let isFinished = false;
+         
+         while (!isFinished && rank <= 8) {
+            if (Math.random()*100 < winProb) isFinished = true;
+            else { rank++; winProb += 1; }
+         }
+         if (rank > 8) rank = 8;
+         
+         const prizes = [0, 1000000, 500000, 100000, 50000, 10000, 5000, 3000, 1000];
+         gameData.money += prizes[rank];
+         
+         const resDiv = document.getElementById("race-result");
+         resDiv.classList.remove("hidden");
+         resDiv.innerHTML = `${rank}등!<br>상금: ${prizes[rank].toLocaleString()}원`;
+         
+         updateUI();
+         saveGame();
+    });
 }
 
-// --- 6. 시간 경과 (패시브) 시스템 ---
 
-// 현실 시간 기반 스탯 감소 (단순화를 위해 setInterval 사용)
-// 5분 = 300,000ms, 10분 = 600,000ms
-// 테스트를 위해 시간을 좀 빠르게 돌릴까요? (일단 요청하신대로 5분/10분 로직 작성)
-// **주의: 브라우저 끄면 초기화됨 (저장 기능 없어서)**
+// --- 9. 유틸리티 (커스텀 알럿/컨펌) ---
 
-setInterval(() => {
-    // 5분마다 포만감 -1
-    gameData.horse.status.hunger -= 1;
-    updateUI();
-}, 300000); // 5분
+let confirmCallback = null;
 
-setInterval(() => {
-    // 10분마다 위생 -1, 기분 -1
-    gameData.horse.status.hygiene = Math.max(0, gameData.horse.status.hygiene - 1);
-    gameData.horse.status.mood = Math.max(0, gameData.horse.status.mood - 1);
-    updateUI();
-}, 600000); // 10분
+function customAlert(msg) {
+    document.getElementById("alert-msg").innerHTML = msg;
+    document.getElementById("alert-btn-group").innerHTML = `<button class="btn-yes" onclick="closeAlert()">확인</button>`;
+    document.getElementById("alert-overlay").classList.remove("hidden");
+}
 
+function confirmModal(msg, callback) {
+    document.getElementById("alert-msg").innerHTML = msg;
+    confirmCallback = callback;
+    document.getElementById("alert-btn-group").innerHTML = `
+        <button class="btn-yes" onclick="confirmYes()">네</button>
+        <button class="btn-no" onclick="closeAlert()">아니요</button>
+    `;
+    document.getElementById("alert-overlay").classList.remove("hidden");
+}
 
-// 초기 실행
-renderInventory();
-updateUI();
-renderStatView();
+function confirmYes() {
+    if (confirmCallback) confirmCallback();
+    closeAlert();
+}
+
+function closeAlert() {
+    document.getElementById("alert-overlay").classList.add("hidden");
+}
+
+// 게임 시작
+initGame();
