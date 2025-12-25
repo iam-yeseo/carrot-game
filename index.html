@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 손안의 마굿간 Ver 0.5</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="game-container">
+        <header class="top-bar">
+            <div class="resource-info">
+                <span id="day-display">1일차</span>
+                <span id="money-display">5,000 원</span>
+            </div>
+            <nav class="location-tabs">
+                <button onclick="changeLocation('stable')" class="tab-btn active" id="btn-stable">🏠 마구간</button>
+                <button onclick="changeLocation('outdoors')" class="tab-btn" id="btn-outdoors">🌳 야외</button>
+                <button onclick="changeLocation('racetrack')" class="tab-btn" id="btn-racetrack">🏁 경마장</button>
+            </nav>
+        </header>
+
+        <div class="main-screen">
+            <div id="view-stable" class="view-section active">
+                <div class="horse-image" id="horse-img">🐴</div>
+                <div class="bubble" id="message-bubble">주인님, 배고파요...</div>
+                
+                <div class="action-area">
+                    <h3>🎒 인벤토리 (클릭해서 사용)</h3>
+                    <div id="inventory-list" class="inventory-grid">
+                        <div class="empty-msg">아이템이 없습니다.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-outdoors" class="view-section">
+                <h3>🏪 잡화점</h3>
+                <div id="shop-list" class="shop-grid">
+                    </div>
+            </div>
+
+            <div id="view-racetrack" class="view-section">
+                <h3>🏆 그랑프리 접수처</h3>
+                <div class="race-info">
+                    <p>참가비: 10,000원</p>
+                    <p>우승 상금: 1,000,000원</p>
+                    <p id="win-prob">예상 우승 확률: 계산 중...</p>
+                </div>
+                <button class="race-btn" onclick="startRace()">🏇 대회 참가하기</button>
+                <div id="race-result" class="hidden"></div>
+            </div>
+        </div>
+
+        <div class="status-panel">
+            <div class="panel-header">
+                <div class="name-box">
+                    <span id="horse-name">초코</span> 
+                    <span class="badge" id="horse-grade">C</span>
+                </div>
+                <button class="toggle-btn" onclick="toggleStatView()">
+                    🔄 <span id="stat-view-mode">상태 보기</span>
+                </button>
+            </div>
+
+            <div id="stat-status" class="stat-group">
+                <div class="stat-row">
+                    <span>컨디션 (종합)</span>
+                    <span id="val-condition" class="stat-val">보통</span>
+                </div>
+                <div class="stat-row">
+                    <span>포만감</span> <div class="bar-bg"><div id="bar-hunger" class="bar-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <span>위생</span> <div class="bar-bg"><div id="bar-hygiene" class="bar-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <span>기분</span> <div class="bar-bg"><div id="bar-mood" class="bar-fill"></div></div>
+                </div>
+            </div>
+
+            <div id="stat-ability" class="stat-group hidden">
+                <div class="stat-grid">
+                    <div class="stat-item">체력 <span id="val-stamina">30</span></div>
+                    <div class="stat-item">속도 <span id="val-speed">25</span></div>
+                    <div class="stat-item">기력 <span id="val-spirit">20</span></div>
+                    <div class="stat-item">매력 <span id="val-charm">15</span></div>
+                </div>
+                <div class="info-text">* 파란색: 버프 / 빨간색: 너프</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
