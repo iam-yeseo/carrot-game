@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Carrot v0.2.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Project Carrot v0.3.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
         <header class="top-bar">
             <div class="resource-row">
                 <span id="date-display" class="clickable-date" onclick="resetGame()">1일차 오전</span>
-                <div class="action-points" id="action-points">⚡️⚡️⚡️⚡️</div>
+                <div class="action-points" id="action-points" onclick="skipPhase()">⚡️⚡️⚡️⚡️</div>
             </div>
             <div class="money-row">
                 <span id="money-display">100,000 원</span>
@@ -34,9 +34,12 @@
                         <div id="horse-emoji" class="horse-emoji">🐴</div>
                     </div>
                     
-                    <div class="name-container">
-                        <span id="horse-name-display" onclick="changeName()">초코</span>
-                        <span class="edit-icon">✏️</span>
+                    <div class="name-grade-row">
+                        <div class="grade-box" id="horse-grade-box">C</div>
+                        <div class="name-container">
+                            <span id="horse-name-display" onclick="changeName()">초코</span>
+                            <span class="edit-icon">✏️</span>
+                        </div>
                     </div>
                     <div class="bubble" id="message-bubble">주인님, 안녕!</div>
                 </div>
@@ -68,23 +71,77 @@
                 </div>
 
                 <div class="stable-inventory-box">
-                    <h4>🎒 내 가방</h4>
-                    <div id="stable-inventory-list" class="mini-inventory">
-                        <span class="empty-msg">비어있음</span>
-                    </div>
+                    <h4>📦 창고</h4>
+                    <div id="stable-inventory-list" class="mini-inventory"><span class="empty-msg">비어있음</span></div>
+                </div>
+
+                <div class="stable-horse-slots">
+                    <h4>🐎 마구간 관리 (클릭하여 선택/판매)</h4>
+                    <div id="horse-slot-container" class="horse-slot-grid">
+                        </div>
                 </div>
             </div>
 
             <div id="view-store" class="view-section">
-                <div id="shop-container"></div>
+                <div class="store-tabs">
+                    <button class="sub-tab active" onclick="switchStoreTab('item')">🛍️ 아이템</button>
+                    <button class="sub-tab" onclick="switchStoreTab('gacha')">🦄 말 뽑기</button>
+                </div>
+
+                <div id="store-view-item">
+                    <div id="shop-container"></div>
+                </div>
+
+                <div id="store-view-gacha" class="hidden">
+                    <div class="gacha-banner">
+                        <h3>운명의 파트너 찾기</h3>
+                        <p>새로운 말이 당신을 기다립니다!</p>
+                    </div>
+                    <div class="gacha-options">
+                        <div class="gacha-card normal" onclick="tryGacha('normal')">
+                            <h4>일반 뽑기</h4>
+                            <p>100,000원</p>
+                            <span class="rate-info">C~SS 등급</span>
+                        </div>
+                        <div class="gacha-card premium" onclick="tryGacha('premium')">
+                            <h4>고급 뽑기</h4>
+                            <p>300,000원</p>
+                            <span class="rate-info">높은 등급 확률 UP!</span>
+                        </div>
+                    </div>
+                    <div class="rate-table">
+                        <small>* 일반: C(50) B(30) A(15) S(4) SS(1)<br>* 고급: C(43) B(25) A(20) S(8) SS(4)</small>
+                    </div>
+                </div>
             </div>
 
             <div id="view-earn" class="view-section">
                 
+                <div class="earn-card race-card">
+                    <h3>🏆 레이싱 그랑프리</h3>
+                    <div class="league-selector">
+                        <select id="league-select" onchange="updateRaceUI()">
+                            <option value="H5">H5 리그 (초급)</option>
+                            <option value="H4">H4 리그 (중급)</option>
+                            <option value="H3">H3 리그 (상급)</option>
+                            <option value="H2">H2 리그 (프로)</option>
+                            <option value="H1">H1 리그 (챔피언)</option>
+                        </select>
+                    </div>
+                    <div class="race-info-box">
+                        <p id="race-fee">참가비: 3,000원</p>
+                        <p id="race-prize">우승 상금: 1,000,000원</p>
+                        <p id="race-prob">기본 우승 확률: 5%</p>
+                    </div>
+                    <p id="my-win-prob" style="color:#f1c40f; font-weight:bold; margin:10px 0;">나의 우승 확률: 계산중...</p>
+                    <button class="race-btn" onclick="startRace()">🏇 참가하기 (⚡️4 소모)</button>
+                    <div id="race-result" class="result-msg hidden"></div>
+                </div>
+
                 <div class="earn-card">
                     <h3>📦 알바하기</h3>
-                    <p class="desc">소소한 용돈벌이 (10회당 ⚡️1 소모)</p>
-                    <p class="desc-small">남은 횟수: <span id="alba-count">30</span>/30 | 누적 클릭: <span id="alba-stack">0</span>/10</p>
+                    <p class="desc">10회마다 ⚡️1 소모 (쿨타임 1초)</p>
+                    <p class="desc-small">현재 회차: <span id="alba-stack">1</span>/10</p>
                     
                     <div class="alba-btn-container">
                         <button id="btn-alba" class="alba-btn" onclick="doAlba()">💰 일하고 돈 받기</button>
@@ -94,35 +151,15 @@
                 </div>
 
                 <div class="earn-card lottery-card">
-                    <h3>🎰 캐럿 로또 6/30</h3>
-                    <p class="desc">하루에 한 번, 인생 역전! (5,000원)</p>
-                    
+                    <h3>🎰 캐럿 로또 3/30</h3>
+                    <p class="desc">하루 한 번, 5,000원</p>
                     <div id="lottery-buy-area">
-                        <div class="lottery-grid" id="lottery-grid">
-                            </div>
-                        <p id="lottery-msg" class="lottery-msg">숫자 3개를 선택해주세요.</p>
-                        <button class="lottery-btn" onclick="buyLottery()">🎟 구매하기</button>
+                        <button class="lottery-btn" onclick="openLotteryModal()">🎟 복권 구매하기</button>
                     </div>
-
-                    <div id="lottery-waiting-area" class="hidden">
-                        <p style="font-weight:bold; margin-bottom:10px;">구매 완료! 내일 아침 추첨!</p>
-                        <div class="my-numbers" id="my-lotto-nums"></div>
+                    <div id="lottery-status-msg" class="desc-small" style="margin-top:5px;"></div>
+                    <div id="lottery-result-btn-area" class="hidden">
+                         <button class="race-btn" onclick="checkLotteryResult()">🎁 결과 확인</button>
                     </div>
-
-                    <div id="lottery-result-area" class="hidden">
-                        <p class="win-title">🎉 추첨 결과 발표! 🎉</p>
-                        <div class="win-numbers" id="win-lotto-nums"></div>
-                        <p id="lotto-rank-msg" style="margin:10px 0; font-weight:bold;"></p>
-                        <button id="btn-claim-prize" class="hidden race-btn" onclick="claimLotteryPrize()">🎁 당첨금 수령</button>
-                    </div>
-                </div>
-
-                <div class="earn-card race-card">
-                    <h3>🏆 그랑프리 H1</h3>
-                    <p class="desc">참가비: 10,000원 / ⚡️4 소모(올인)</p>
-                    <p id="win-prob">우승 확률 계산 중...</p>
-                    <button class="race-btn" onclick="startRace()">🏇 참가하기</button>
-                    <div id="race-result" class="result-msg hidden"></div>
                 </div>
             </div>
         </div>
@@ -130,29 +167,39 @@
 
     <div id="modal-overlay" class="hidden">
         <div class="modal-box">
-            <h3 id="modal-title">아이템 선택</h3>
-            <div id="modal-list" class="modal-list-area"></div>
-            
-            <div id="modal-quantity-area" class="hidden">
-                <p id="selected-item-name" style="font-weight:bold; margin-bottom:10px;">아이템명</p>
+            <h3 id="modal-title">아이템</h3>
+            <div id="modal-content-area"></div> <div id="modal-qty-area" class="hidden">
                 <div class="qty-control">
-                    <button onclick="changeQty(-1)">-</button>
-                    <span id="qty-display">1</span>
-                    <button onclick="changeQty(1)">+</button>
+                    <button onclick="changeModalQty(-1)">-</button>
+                    <input type="number" id="modal-qty-input" value="1" readonly>
+                    <button onclick="changeModalQty(1)">+</button>
                 </div>
-                <p id="effect-preview" class="preview-text">효과 미리보기</p>
-                <button class="confirm-btn" onclick="confirmUseItem()">사용하기</button>
+                <p id="modal-cost-preview" class="preview-text"></p>
             </div>
-            
-            <button class="close-btn" onclick="closeModal()">닫기</button>
+            <div class="modal-btns">
+                <button class="btn-no" onclick="closeModal()">취소</button>
+                <button class="btn-yes" id="modal-confirm-btn">확인</button>
+            </div>
         </div>
     </div>
 
     <div id="alert-overlay" class="hidden">
         <div class="alert-box">
-            <p id="alert-msg">메시지 내용</p>
-            <div class="alert-btns" id="alert-btn-group">
-                <button onclick="closeAlert()">확인</button>
+            <p id="alert-msg">메시지</p>
+            <div class="alert-btns">
+                <button class="btn-no" id="alert-btn-no" onclick="closeAlert()">아니오</button>
+                <button class="btn-yes" id="alert-btn-yes" onclick="confirmYes()">예</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="lotto-overlay" class="hidden">
+        <div class="modal-box" style="max-width:350px;">
+            <h3>번호 3개 선택</h3>
+            <div class="lottery-grid" id="lottery-grid"></div>
+            <div class="modal-btns">
+                <button class="btn-no" onclick="closeLottoModal()">취소</button>
+                <button class="btn-yes" onclick="buyLotteryConfirm()">구매</button>
             </div>
         </div>
     </div>
