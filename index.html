@@ -2,91 +2,148 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 손안의 마굿간 Ver 0.5</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Project Carrot v0.2.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="game-container">
         <header class="top-bar">
-            <div class="resource-info">
-                <span id="day-display">1일차</span>
-                <span id="money-display">5,000 원</span>
+            <div class="resource-row">
+                <span id="date-display" class="clickable-date" onclick="resetGame()">1일차 오전</span>
+                <div class="action-points" id="action-points">⚡️⚡️⚡️⚡️</div>
             </div>
+            <div class="money-row">
+                <span id="money-display">100,000 원</span>
+            </div>
+            
             <nav class="location-tabs">
                 <button onclick="changeLocation('stable')" class="tab-btn active" id="btn-stable">🏠 마구간</button>
-                <button onclick="changeLocation('outdoors')" class="tab-btn" id="btn-outdoors">🌳 야외</button>
-                <button onclick="changeLocation('racetrack')" class="tab-btn" id="btn-racetrack">🏁 경마장</button>
+                <button onclick="changeLocation('store')" class="tab-btn" id="btn-store">🏪 잡화점</button>
+                <button onclick="changeLocation('earn')" class="tab-btn" id="btn-earn">💰 돈 벌기</button>
             </nav>
         </header>
 
         <div class="main-screen">
+            
             <div id="view-stable" class="view-section active">
-                <div class="horse-image" id="horse-img">🐴</div>
-                <div class="bubble" id="message-bubble">주인님, 배고파요...</div>
+                <div class="horse-profile">
+                    <div class="horse-image" id="horse-img">🐴</div>
+                    <div class="name-container">
+                        <span id="horse-name-display" onclick="changeName()">초코</span>
+                        <span class="edit-icon">✏️</span>
+                    </div>
+                    <div class="bubble" id="message-bubble">주인님, 안녕!</div>
+                </div>
+
+                <div class="panel-header-box">
+                    <span id="panel-title">초코의 상태</span>
+                    <button class="toggle-btn" onclick="toggleStatView()">🔄 전환</button>
+                </div>
+
+                <div id="stat-status" class="stat-group">
+                    <div class="stat-row">
+                        <span class="label">컨디션</span>
+                        <span id="val-condition" class="value-text">보통</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">포만감</span>
+                        <div class="bar-bg"><div id="bar-hunger" class="bar-fill"></div></div>
+                        <span id="text-hunger" class="num-text">50</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">위생</span>
+                        <div class="bar-bg"><div id="bar-hygiene" class="bar-fill"></div></div>
+                        <span id="text-hygiene" class="num-text">50</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">기분</span>
+                        <div class="bar-bg"><div id="bar-mood" class="bar-fill"></div></div>
+                        <span id="text-mood" class="num-text">50</span>
+                    </div>
+                </div>
+
+                <div id="stat-ability" class="stat-group hidden">
+                    <div class="stat-row">
+                        <span class="label">체력</span>
+                        <div class="bar-bg"><div id="bar-stamina" class="bar-fill ability"></div></div>
+                        <span id="text-stamina" class="num-text">30</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">속도</span>
+                        <div class="bar-bg"><div id="bar-speed" class="bar-fill ability"></div></div>
+                        <span id="text-speed" class="num-text">25</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">기력</span>
+                        <div class="bar-bg"><div id="bar-spirit" class="bar-fill ability"></div></div>
+                        <span id="text-spirit" class="num-text">20</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">매력</span>
+                        <div class="bar-bg"><div id="bar-charm" class="bar-fill ability"></div></div>
+                        <span id="text-charm" class="num-text">15</span>
+                    </div>
+                </div>
+
+                <div class="action-panel-grid">
+                    <button onclick="openItemModal('food')">🥕 먹이주기</button>
+                    <button onclick="openItemModal('toy')">🎾 놀아주기</button>
+                    <button onclick="openItemModal('train')">🏃 훈련하기</button>
+                    <button onclick="openItemModal('care')">✨ 관리하기</button>
+                </div>
+            </div>
+
+            <div id="view-store" class="view-section">
+                <div id="shop-container"></div>
+            </div>
+
+            <div id="view-earn" class="view-section">
                 
-                <div class="action-area">
-                    <h3>🎒 인벤토리 (클릭해서 사용)</h3>
-                    <div id="inventory-list" class="inventory-grid">
-                        <div class="empty-msg">아이템이 없습니다.</div>
-                    </div>
+                <div class="earn-card">
+                    <h3>📦 알바하기</h3>
+                    <p class="desc">소소한 용돈벌이 (남은 횟수: <span id="alba-count">30</span>/30)</p>
+                    <button class="alba-btn" onclick="doAlba()">💰 일하고 돈 받기</button>
+                    <div id="alba-result" class="result-msg"></div>
                 </div>
-            </div>
 
-            <div id="view-outdoors" class="view-section">
-                <h3>🏪 잡화점</h3>
-                <div id="shop-list" class="shop-grid">
-                    </div>
-            </div>
-
-            <div id="view-racetrack" class="view-section">
-                <h3>🏆 그랑프리 접수처</h3>
-                <div class="race-info">
-                    <p>참가비: 10,000원</p>
-                    <p>우승 상금: 1,000,000원</p>
-                    <p id="win-prob">예상 우승 확률: 계산 중...</p>
+                <div class="earn-card race-card">
+                    <h3>🏆 레이싱 그랑프리 H1</h3>
+                    <p class="desc">참가비: 10,000원 / 우승 상금: 1,000,000원</p>
+                    <p id="win-prob">우승 확률 계산 중...</p>
+                    <button class="race-btn" onclick="startRace()">🏇 참가하기 (⚡️1 소모)</button>
+                    <div id="race-result" class="result-msg hidden"></div>
                 </div>
-                <button class="race-btn" onclick="startRace()">🏇 대회 참가하기</button>
-                <div id="race-result" class="hidden"></div>
             </div>
         </div>
+    </div>
 
-        <div class="status-panel">
-            <div class="panel-header">
-                <div class="name-box">
-                    <span id="horse-name">초코</span> 
-                    <span class="badge" id="horse-grade">C</span>
+    <div id="modal-overlay" class="hidden">
+        <div class="modal-box">
+            <h3 id="modal-title">아이템 선택</h3>
+            <div id="modal-list" class="modal-list-area"></div>
+            
+            <div id="modal-quantity-area" class="hidden">
+                <p id="selected-item-name">선택된 아이템</p>
+                <div class="qty-control">
+                    <button onclick="changeQty(-1)">-</button>
+                    <span id="qty-display">1</span>
+                    <button onclick="changeQty(1)">+</button>
                 </div>
-                <button class="toggle-btn" onclick="toggleStatView()">
-                    🔄 <span id="stat-view-mode">상태 보기</span>
-                </button>
+                <p id="effect-preview" class="preview-text">예상 효과: 포만감 +15</p>
+                <button class="confirm-btn" onclick="confirmUseItem()">사용하기</button>
             </div>
+            
+            <button class="close-btn" onclick="closeModal()">닫기</button>
+        </div>
+    </div>
 
-            <div id="stat-status" class="stat-group">
-                <div class="stat-row">
-                    <span>컨디션 (종합)</span>
-                    <span id="val-condition" class="stat-val">보통</span>
-                </div>
-                <div class="stat-row">
-                    <span>포만감</span> <div class="bar-bg"><div id="bar-hunger" class="bar-fill"></div></div>
-                </div>
-                <div class="stat-row">
-                    <span>위생</span> <div class="bar-bg"><div id="bar-hygiene" class="bar-fill"></div></div>
-                </div>
-                <div class="stat-row">
-                    <span>기분</span> <div class="bar-bg"><div id="bar-mood" class="bar-fill"></div></div>
-                </div>
-            </div>
-
-            <div id="stat-ability" class="stat-group hidden">
-                <div class="stat-grid">
-                    <div class="stat-item">체력 <span id="val-stamina">30</span></div>
-                    <div class="stat-item">속도 <span id="val-speed">25</span></div>
-                    <div class="stat-item">기력 <span id="val-spirit">20</span></div>
-                    <div class="stat-item">매력 <span id="val-charm">15</span></div>
-                </div>
-                <div class="info-text">* 파란색: 버프 / 빨간색: 너프</div>
+    <div id="alert-overlay" class="hidden">
+        <div class="alert-box">
+            <p id="alert-msg">메시지 내용</p>
+            <div class="alert-btns" id="alert-btn-group">
+                <button onclick="closeAlert()">확인</button>
             </div>
         </div>
     </div>
