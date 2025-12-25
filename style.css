@@ -1,0 +1,176 @@
+/* 기본 초기화 */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background-color: #f0f2f5;
+    font-family: 'Suit', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* 모바일 프레임 */
+.game-container {
+    width: 100%;
+    max-width: 400px;
+    background-color: #fff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+/* 상단바 */
+.top-bar {
+    background-color: #2c3e50;
+    color: white;
+}
+.resource-info {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    border-bottom: 1px solid #34495e;
+}
+.location-tabs {
+    display: flex;
+}
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: #34495e;
+    color: #bdc3c7;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+.tab-btn.active {
+    background: #fff;
+    color: #2c3e50;
+    border-top: 3px solid #e67e22;
+}
+
+/* 메인 화면 */
+.main-screen {
+    flex: 1;
+    overflow-y: auto; /* 내용 많으면 스크롤 */
+    background-color: #ecf0f1;
+    padding: 15px;
+    position: relative;
+}
+.view-section { display: none; }
+.view-section.active { display: block; }
+.hidden { display: none !important; }
+
+/* 마구간 요소 */
+.horse-image {
+    font-size: 80px;
+    text-align: center;
+    margin-top: 20px;
+    animation: bounce 2s infinite;
+}
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+.bubble {
+    background: white;
+    padding: 10px;
+    border-radius: 15px;
+    text-align: center;
+    margin: 10px auto;
+    width: 80%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* 상점 & 인벤토리 그리드 */
+.shop-grid, .inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+.item-card {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.1s;
+}
+.item-card:active { transform: scale(0.95); }
+.item-name { font-weight: bold; display: block; margin-bottom: 5px; }
+.item-price, .item-count { color: #e67e22; font-weight: bold; }
+
+/* 경마장 */
+.race-info {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+.race-btn {
+    width: 100%;
+    padding: 15px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+#race-result {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f1c40f;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* 하단 스탯 패널 */
+.status-panel {
+    background: #fff;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.name-box { font-size: 18px; font-weight: bold; }
+.badge { background: #ffeaa7; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #d35400; }
+.toggle-btn {
+    padding: 5px 10px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* 게이지 바 */
+.stat-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 13px; }
+.stat-row span:first-child { width: 60px; }
+.bar-bg { flex: 1; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; width: 50%; background: #2ecc71; transition: width 0.5s; }
+#bar-hunger { background: #e67e22; }
+#bar-hygiene { background: #3498db; }
+#bar-mood { background: #9b59b6; }
+
+/* 능력치 그리드 */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-item { background: #f9f9f9; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; }
+.info-text { font-size: 11px; color: #7f8c8d; margin-top: 5px; text-align: right; }
+
+/* 버프/너프 텍스트 색상 */
+.buff { color: #2980b9; } /* 파랑 */
+.nerf { color: #c0392b; } /* 빨강 */
