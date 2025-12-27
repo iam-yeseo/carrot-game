@@ -1,154 +1,699 @@
-/* 기본 초기화 */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0b1220;
+  --card: #101a30;
+  --card2: #0f1730;
+  --line: rgba(255, 255, 255, 0.08);
+  --txt: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.6);
+  --muted2: rgba(255, 255, 255, 0.4);
+  --blue: #2f7dff;
+  --blue2: #1e5fe0;
+  --grayBtn: rgba(255, 255, 255, 0.12);
+  --good: #19c37d;
+  --warn: #ffcc00;
+  --bad: #ff4d4d;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --r: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
 body {
-    background-color: #f0f2f5;
-    font-family: 'Suit', sans-serif, -apple-system, BlinkMacSystemFont; 
-    display: flex; justify-content: center; align-items: flex-start;
-    min-height: 100vh; user-select: none;
-    touch-action: manipulation;
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Apple SD Gothic Neo',
+    'Noto Sans KR', Segoe UI, Roboto, Arial, sans-serif;
+  background: radial-gradient(
+    1200px 800px at 50% 0%,
+    #172a55 0%,
+    var(--bg) 45%,
+    #070b14 100%
+  );
+  color: var(--txt);
 }
 
-/* 앱 프레임 */
-.game-container {
-    width: 100%; max-width: 480px; min-height: 100vh;
-    background: #fff; display: flex; flex-direction: column;
-    box-shadow: 0 0 20px rgba(0,0,0,0.15); position: relative;
+button,
+.btn {
+  touch-action: manipulation;
 }
 
-/* 상단바 */
-.top-bar { background: #2d3436; color: white; padding-top: 10px; flex-shrink: 0; }
-.resource-row { padding: 0 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-.clickable-date { cursor: pointer; text-decoration: underline; font-size: 14px; color: #dfe6e9; }
-.action-points { font-size: 14px; color: #f1c40f; cursor: pointer; }
-.money-row { padding: 0 15px 10px; font-size: 18px; font-weight: bold; color: #81ecec; text-align: right; }
-#money-display { cursor: pointer; }
-
-.location-tabs { display: flex; }
-.tab-btn { flex: 1; padding: 12px; background: #636e72; color: #b2bec3; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
-.tab-btn.active { background: #fff; color: #2d3436; border-top: 3px solid #e17055; }
-
-/* 메인 스크린 */
-.main-screen { flex: 1; overflow-y: auto; background: #f5f6fa; padding: 15px; padding-bottom: 50px; }
-.view-section { display: none; }
-.view-section.active { display: block; animation: fadeIn 0.3s; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-/* [마구간] */
-.horse-profile { text-align: center; margin-bottom: 20px; }
-.horse-image-wrapper { position: relative; display: inline-block; cursor: pointer; }
-.horse-emoji { font-size: 90px; margin-bottom: 10px; animation: bounce 3s infinite; }
-.horse-image { width: 150px; height: 150px; object-fit: contain; margin-bottom: 10px; animation: bounce 3s infinite; }
-@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
-.name-grade-row { display: flex; justify-content: center; align-items: center; gap: 8px; }
-.grade-box { width: 24px; height: 24px; background: #2d3436; color: #f1c40f; font-weight: bold; border-radius: 4px; display: flex; justify-content: center; align-items: center; font-size: 14px; }
-.name-container { display: inline-flex; align-items: center; background: white; padding: 5px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
-#horse-name-display { font-size: 20px; font-weight: bold; color: #2d3436; margin-right: 5px; }
-.edit-icon { font-size: 12px; opacity: 0.5; }
-.bubble { margin-top: 15px; background: white; padding: 10px; border-radius: 10px; font-size: 14px; color: #636e72; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-.panel-header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; color: #2d3436; }
-.toggle-btn { padding: 5px 10px; background: #74b9ff; color: white; border: none; border-radius: 12px; font-size: 12px; cursor: pointer; }
-.stat-group { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
-.stat-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 13px; }
-.stat-row .label { width: 50px; font-weight: bold; color: #636e72; }
-.bar-bg { flex: 1; height: 10px; background: #dfe6e9; border-radius: 5px; overflow: hidden; margin: 0 10px; }
-.bar-fill { height: 100%; width: 50%; transition: width 0.5s; }
-.num-text { width: 40px; text-align: right; font-weight: bold; color: #2d3436; font-size: 12px; }
-#bar-hunger { background: #fdcb6e; } #bar-hygiene { background: #00cec9; } #bar-mood { background: #e84393; } .bar-fill.ability { background: #6c5ce7; }
-
-.stable-inventory-box, .stable-horse-slots { margin-top: 15px; background: #f9f9f9; border-radius: 10px; padding: 10px; }
-h4 { font-size: 14px; color: #636e72; margin-bottom: 8px; }
-.mini-inventory { display: flex; flex-wrap: wrap; gap: 5px; }
-.mini-item-chip { background: white; border: 1px solid #dfe6e9; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; color: #2d3436; }
-.empty-msg { color: #b2bec3; font-size: 12px; }
-
-.horse-slot-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-.horse-slot { aspect-ratio: 1/1; background: white; border: 2px solid #dfe6e9; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; position: relative; font-size: 11px; font-weight: bold; color: #b2bec3; }
-.horse-slot.active { border-color: #e17055; background: #fff0e6; color: #d35400; }
-.horse-slot.filled { color: #2d3436; }
-.slot-grade { position: absolute; top: 2px; right: 2px; font-size: 9px; background: #2d3436; color: #f1c40f; padding: 1px 3px; border-radius: 3px; }
-
-.action-panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.action-panel-grid button { padding: 15px; background: white; border: 1px solid #dfe6e9; border-radius: 10px; font-weight: bold; color: #2d3436; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-/* [상점] */
-.store-tabs { display: flex; margin-bottom: 15px; gap: 10px; }
-.sub-tab { flex: 1; padding: 8px; background: #dfe6e9; border: none; border-radius: 20px; font-weight: bold; color: #636e72; cursor: pointer; }
-.sub-tab.active { background: #6c5ce7; color: white; }
-.category-block { margin-bottom: 20px; }
-.category-title { font-size: 16px; font-weight: bold; color: #2d3436; margin-bottom: 10px; border-left: 4px solid #e17055; padding-left: 8px; }
-.shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.item-card { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; cursor: pointer; }
-.item-name { display: block; font-weight: bold; font-size: 14px; }
-.item-price { color: #e17055; font-weight: bold; font-size: 13px; display: block; margin-bottom: 4px; }
-.item-desc { font-size: 11px; color: #636e72; }
-
-.gacha-banner { text-align: center; margin-bottom: 15px; background: #a29bfe; color: white; padding: 15px; border-radius: 10px; }
-.gacha-options { display: flex; gap: 10px; margin-bottom: 15px; }
-.gacha-card { flex: 1; background: white; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; }
-.gacha-card.normal { border-color: #b2bec3; }
-.gacha-card.premium { border-color: #e17055; background: #fff0e6; }
-.rate-info { font-size: 11px; color: #636e72; display: block; margin-top: 5px; }
-.rate-table { font-size: 11px; color: #636e72; background: #f1f2f6; padding: 10px; border-radius: 5px; }
-
-/* [돈 벌기] */
-.earn-card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.race-btn { width: 100%; padding: 12px; background: #d63031; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
-.desc { color: #636e72; font-size: 13px; margin: 10px 0; }
-.desc-small { font-size: 11px; color: #b2bec3; margin-bottom: 10px; }
-
-.alba-btn-container { position: relative; margin-bottom: 10px; }
-.alba-btn { width: 100%; padding: 12px; background: #00b894; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; z-index: 2; position: relative; }
-.alba-btn:disabled { cursor: not-allowed; }
-.cooldown-bar-bg { height: 6px; background: #dfe6e9; border-radius: 3px; margin-top: 5px; overflow: hidden; }
-.cooldown-bar-fill { height: 100%; width: 0%; background: #00b894; }
-
-.lottery-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin: 10px 0; }
-.lotto-num { background: #fff; border: 1px solid #ccc; border-radius: 5px; padding: 8px 0; text-align: center; font-weight: bold; cursor: pointer; font-size: 14px; }
-.lotto-num.selected { background: #6c5ce7; color: white; border-color: #6c5ce7; }
-.lottery-btn { width: 100%; padding: 10px; background: #6c5ce7; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-.lottery-btn:disabled { background: #b2bec3; cursor: not-allowed; }
-
-.league-list-box { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; }
-.league-btn { padding: 15px; border: 1px solid #dfe6e9; background: white; border-radius: 8px; text-align: left; cursor: pointer; transition: 0.2s; }
-.league-btn:hover { background: #f1f2f6; }
-.league-btn.disabled { background: #f5f6fa; color: #b2bec3; cursor: not-allowed; border-color: #eee; }
-.league-btn-title { font-weight: bold; font-size: 16px; display: block; margin-bottom: 4px; }
-.league-btn-info { font-size: 12px; color: #636e72; }
-
-/* [모달] */
-.hidden { display: none !important; }
-#modal-overlay, #alert-overlay, #lotto-overlay, #cheat-overlay, #league-overlay, #gacha-anim-overlay, #gacha-result-overlay { 
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.5); z-index: 100; 
-    display: flex; justify-content: center; align-items: center; 
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 12px 12px 18px;
 }
-.modal-box, .alert-box { background: white; width: 90%; max-width: 320px; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; }
 
-.qty-control { display: flex; justify-content: center; align-items: center; margin: 15px 0; gap: 10px; }
-.qty-control button { width: 30px; height: 30px; font-weight: bold; cursor: pointer; }
-.qty-control input { width: 50px; text-align: center; font-size: 16px; border: 1px solid #dfe6e9; border-radius: 5px; height: 30px; }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 10px;
+}
 
-.modal-btns, .alert-btns { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
-.modal-btns button, .alert-btns button { flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px; }
-.btn-no { background: #b2bec3; color: white; }
-.btn-yes { background: #0984e3; color: white; }
-.modal-item-row { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
-.modal-item-row:hover { background: #f9f9f9; }
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-/* 가챠 애니메이션 */
-.gacha-box-anim { font-size: 100px; animation: shake 0.5s infinite; }
+.time-pill {
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.ap-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--txt);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ap-ico {
+  filter: saturate(1.2);
+}
+.money-pill {
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--txt);
+  font-weight: 800;
+  cursor: pointer;
+}
+.money-pill .won {
+  opacity: 0.85;
+  margin-right: 2px;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 8px 0 10px;
+}
+.tab {
+  padding: 10px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.tab.active {
+  background: linear-gradient(
+    180deg,
+    rgba(47, 125, 255, 0.28),
+    rgba(47, 125, 255, 0.12)
+  );
+  border-color: rgba(47, 125, 255, 0.55);
+  color: var(--txt);
+}
+
+.views {
+  display: block;
+}
+.view {
+  display: none;
+}
+.view.active {
+  display: block;
+}
+
+.panel {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.035)
+  );
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.panel-head h2 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: -0.2px;
+}
+.panel-subhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 6px 0 10px;
+}
+.panel-subhead h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+.tiny {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.divider {
+  height: 1px;
+  background: var(--line);
+  margin: 12px 0;
+}
+
+/* Buttons */
+.btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--grayBtn);
+  color: var(--txt);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn.primary {
+  background: linear-gradient(180deg, var(--blue), var(--blue2));
+  border-color: rgba(47, 125, 255, 0.65);
+}
+.btn.big {
+  padding: 14px 14px;
+  font-size: 16px;
+  border-radius: 14px;
+}
+
+/* Lists */
+.horse-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.horse-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 14px;
+  cursor: pointer;
+}
+.horse-card.active {
+  border-color: rgba(25, 195, 125, 0.75);
+  box-shadow: 0 0 0 2px rgba(25, 195, 125, 0.12) inset;
+}
+.horse-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.horse-name {
+  font-size: 14px;
+  font-weight: 900;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+}
+.grade-C {
+  background: rgba(255, 255, 255, 0.06);
+}
+.grade-B {
+  background: rgba(120, 200, 255, 0.14);
+}
+.grade-A {
+  background: rgba(120, 255, 200, 0.14);
+}
+.grade-S {
+  background: rgba(255, 200, 120, 0.14);
+}
+.grade-SS {
+  background: rgba(255, 120, 200, 0.16);
+}
+
+.horse-detail {
+  display: grid;
+  gap: 10px;
+}
+.card-mini {
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 14px;
+  padding: 10px;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.kv {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.kv .k {
+  font-size: 12px;
+  color: var(--muted);
+}
+.kv .v {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.bars {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.bar {
+  display: grid;
+  grid-template-columns: 70px 1fr 42px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.meter {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.fill {
+  height: 100%;
+  width: 50%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(47, 125, 255, 0.9),
+    rgba(25, 195, 125, 0.9)
+  );
+}
+.fill.status {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 204, 0, 0.95),
+    rgba(25, 195, 125, 0.9)
+  );
+}
+.fill.bad {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 77, 77, 0.95),
+    rgba(255, 204, 0, 0.9)
+  );
+}
+
+.inventory {
+  display: grid;
+  gap: 8px;
+}
+.inv-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 14px;
+}
+.inv-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.inv-title {
+  font-weight: 900;
+}
+.inv-desc {
+  font-size: 12px;
+  color: var(--muted);
+}
+.inv-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  font-weight: 900;
+  font-size: 12px;
+}
+
+/* Store */
+.store-items {
+  display: grid;
+  gap: 10px;
+}
+.store-item {
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 14px;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+}
+.store-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.qty-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.qty input {
+  width: 64px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--txt);
+  font-weight: 900;
+}
+.gacha-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+.gacha-row .btn {
+  flex: 1;
+}
+
+/* Work */
+.work-box {
+  display: grid;
+  gap: 10px;
+}
+.work-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.stat {
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  padding: 10px;
+}
+.stat .label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.stat .value {
+  font-size: 16px;
+  font-weight: 900;
+  margin-top: 4px;
+}
+.cooldown {
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+.coolbar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(
+    90deg,
+    rgba(47, 125, 255, 0.9),
+    rgba(25, 195, 125, 0.9)
+  );
+  transition: width 1s linear; /* 쿨타임 게이지 */
+}
+
+/* Lottery */
+.lottery-state {
+  margin-bottom: 10px;
+}
+.lottery-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+.lotto-num {
+  padding: 10px 0;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--txt);
+  font-weight: 900;
+  text-align: center;
+  cursor: pointer;
+}
+.lotto-num.selected {
+  border-color: rgba(47, 125, 255, 0.8);
+  box-shadow: 0 0 0 2px rgba(47, 125, 255, 0.18) inset;
+  background: rgba(47, 125, 255, 0.18);
+}
+.lottery-actions {
+  display: flex;
+  gap: 10px;
+}
+.lottery-actions .btn {
+  flex: 1;
+}
+
+/* Racing */
+.league-list {
+  display: grid;
+  gap: 10px;
+}
+.league {
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 14px;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+}
+.league-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.league-code {
+  font-size: 14px;
+  font-weight: 1000;
+}
+.race-log {
+  display: grid;
+  gap: 8px;
+  max-height: 240px;
+  overflow: auto;
+  padding-right: 2px;
+}
+.log-item {
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  padding: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.log-item b {
+  color: var(--txt);
+}
+
+/* Modal */
+.modal-root {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.modal-root.open {
+  display: flex;
+}
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+.modal {
+  position: relative;
+  width: min(440px, calc(100vw - 28px));
+  background: linear-gradient(
+    180deg,
+    rgba(16, 26, 48, 0.98),
+    rgba(10, 16, 30, 0.98)
+  );
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.modal-body {
+  padding: 14px 14px 6px;
+}
+.modal-body h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+.modal-content {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px 14px 14px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid var(--line);
+  color: var(--txt);
+  padding: 10px 12px;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  max-width: min(460px, calc(100vw - 28px));
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* Gacha Animation */
 @keyframes shake {
-    0% { transform: translate(1px, 1px) rotate(0deg); }
-    10% { transform: translate(-1px, -2px) rotate(-1deg); }
-    20% { transform: translate(-3px, 0px) rotate(1deg); }
-    30% { transform: translate(3px, 2px) rotate(0deg); }
-    40% { transform: translate(1px, -1px) rotate(1deg); }
-    50% { transform: translate(-1px, 2px) rotate(-1deg); }
-    60% { transform: translate(-3px, 1px) rotate(0deg); }
-    70% { transform: translate(3px, 1px) rotate(-1deg); }
-    80% { transform: translate(-1px, -1px) rotate(1deg); }
-    90% { transform: translate(1px, 2px) rotate(0deg); }
-    100% { transform: translate(1px, -2px) rotate(-1deg); }
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  15% {
+    transform: translateX(-4px) rotate(-2deg);
+  }
+  30% {
+    transform: translateX(5px) rotate(2deg);
+  }
+  45% {
+    transform: translateX(-5px) rotate(-2deg);
+  }
+  60% {
+    transform: translateX(4px) rotate(2deg);
+  }
+  75% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+.gacha-box {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: linear-gradient(
+    180deg,
+    rgba(47, 125, 255, 0.25),
+    rgba(255, 255, 255, 0.06)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+.gacha-box.shake {
+  animation: shake 0.9s ease-in-out infinite;
+}
+
+/* Emoji bounce (reflow trick works with this class) */
+@keyframes bounce {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: translateY(-12px) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+}
+.emoji-pop {
+  display: inline-block;
+  animation: bounce 0.55s ease-out 1;
+}
+
+/* Desktop */
+@media (min-width: 700px) {
+  body {
+    display: flex;
+    justify-content: center;
+  }
+  .app {
+    padding-top: 18px;
+  }
 }
