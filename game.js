@@ -165,6 +165,8 @@ let state = loadState();
 /* =========================
    INIT
 ========================= */
+// INIT 직후
+ui.modalOverlay.hidden = true;
 applyTheme(state.theme);
 bindEvents();
 renderAll();
