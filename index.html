@@ -1,291 +1,243 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko" data-theme="dark">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-    />
-    <meta name="theme-color" content="#0b0f14" />
-    <title>Project Carrot v0.3.4</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f14" />
+  <title>Project Carrot v0.3.4</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
 
-  <body>
-    <header class="topbar">
-      <div class="topbar__row">
-        <div class="brand">
-          <div class="brand__title">
-            Project Carrot <span class="ver">v0.3.4</span>
-          </div>
-          <div class="brand__meta" id="timeText">1일차 오전</div>
-          <div class="brand__tab" id="tabText">마구간</div>
-        </div>
-
-        <div class="hud">
-          <div class="hud__item">
-            <div class="hud__label">AP</div>
-            <div class="hud__value">
-              <span id="apText">10</span>/<span id="apMaxText">10</span>
-            </div>
-          </div>
-          <div class="hud__item">
-            <div class="hud__label">소지금</div>
-            <div class="hud__value"><span id="moneyText">10,000</span>원</div>
-          </div>
-        </div>
+<body>
+  <header class="topbar">
+    <div class="topbar__row">
+      <div class="brand">
+        <div class="brand__title">Project Carrot <span class="ver">v0.3.4</span></div>
+        <div class="brand__meta" id="timeText">1일차 오전</div>
+        <div class="brand__tab" id="tabText">마구간</div>
       </div>
 
-      <div class="topbar__row topbar__row--actions">
-        <button class="btn btn--ghost" id="btnNextTime">다음 시간 ▶</button>
-        <div class="hint">※ AP는 시간(오전/오후) 넘어갈 때마다 10으로 리필</div>
+      <div class="hud">
+        <div class="hud__item">
+          <div class="hud__label">AP</div>
+          <div class="hud__value"><span id="apText">10</span>/<span id="apMaxText">10</span></div>
+        </div>
+        <div class="hud__item">
+          <div class="hud__label">소지금</div>
+          <div class="hud__value"><span id="moneyText">10,000</span>원</div>
+        </div>
       </div>
-    </header>
+    </div>
 
-    <main class="content" id="content">
-      <!-- 마구간 -->
-      <section class="panel" id="panel-stable" data-panel="stable">
-        <div class="card">
-          <div class="card__header">
-            <div class="card__title">마구간</div>
-            <div class="card__sub">말 상태 확인 / 아이템 사용 / 이름 변경</div>
-          </div>
+    <div class="topbar__row topbar__row--actions">
+      <button class="btn btn--ghost" id="btnNextTime">다음 시간 ▶</button>
+      <div class="hint">※ AP는 시간(오전/오후) 넘어갈 때마다 10으로 리필</div>
+    </div>
+  </header>
 
-          <div id="stableEmpty" class="empty">
-            <div class="empty__title">아직 말이 없어요 🐴</div>
-            <div class="empty__desc">
-              하단 <b>뽑기</b> 탭에서 말을 뽑아 데려오세요.
-            </div>
-          </div>
-
-          <div id="stableHorse" class="horse" hidden>
-            <div class="horse__top">
-              <div>
-                <div class="horse__name">
-                  <span id="horseName">이름없음</span>
-                  <button class="chip" id="btnRenameHorse">이름 변경</button>
-                </div>
-                <div class="horse__id" id="horseId">ID: -</div>
-              </div>
-              <div
-                class="badge"
-                id="winProbBadge"
-                title="그랑프리 예상 우승 확률(참고용)"
-              >
-                우승확률 -
-              </div>
-            </div>
-
-            <div class="grid2">
-              <div class="stat">
-                <div class="stat__label">체력</div>
-                <div class="stat__value" id="statHp">0</div>
-              </div>
-              <div class="stat">
-                <div class="stat__label">말 기력</div>
-                <div class="stat__value" id="statVigor">0</div>
-              </div>
-              <div class="stat">
-                <div class="stat__label">속도</div>
-                <div class="stat__value" id="statSpeed">0</div>
-              </div>
-              <div class="stat">
-                <div class="stat__label">매력</div>
-                <div class="stat__value" id="statCharm">0</div>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="grid3">
-              <div class="meter">
-                <div class="meter__label">포만감</div>
-                <div class="meter__bar">
-                  <div class="meter__fill" id="needSatiety"></div>
-                </div>
-                <div class="meter__num" id="needSatietyText">0/100</div>
-              </div>
-              <div class="meter">
-                <div class="meter__label">위생</div>
-                <div class="meter__bar">
-                  <div class="meter__fill" id="needHygiene"></div>
-                </div>
-                <div class="meter__num" id="needHygieneText">0/100</div>
-              </div>
-              <div class="meter">
-                <div class="meter__label">기분</div>
-                <div class="meter__bar">
-                  <div class="meter__fill" id="needMood"></div>
-                </div>
-                <div class="meter__num" id="needMoodText">0/100</div>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="card__title">인벤토리</div>
-            <div class="list" id="inventoryList"></div>
-            <div class="hint">
-              ※ 홀스부스터는 <b>오전 1회 / 오후 1회</b>만 사용 가능
-            </div>
-          </div>
+  <main class="content" id="content">
+    <!-- 마구간 -->
+    <section class="panel" id="panel-stable" data-panel="stable">
+      <div class="card">
+        <div class="card__header">
+          <div class="card__title">마구간</div>
+          <div class="card__sub">말 상태 확인 / 아이템 사용 / 이름 변경</div>
         </div>
-      </section>
 
-      <!-- 상점 -->
-      <section class="panel" id="panel-shop" data-panel="shop" hidden>
-        <div class="card">
-          <div class="card__header">
-            <div>
-              <div class="card__title">상점</div>
-              <div class="card__sub">아이템 구매 + 복권 구매</div>
-            </div>
-          </div>
-
-          <div class="shopTop">
-            <button class="btn" id="btnBuyLottery">복권 구매 (5,000원)</button>
-            <div class="hint">
-              ※ 복권은 즉시 결과가 나옵니다. (상점으로 이동 완료)
-            </div>
-          </div>
-
-          <div class="segmented" role="tablist" aria-label="상점 탭">
-            <button class="segmented__btn is-active" data-shopcat="manage">
-              관리 아이템
-            </button>
-            <button class="segmented__btn" data-shopcat="growth">
-              성장 아이템
-            </button>
-            <button class="segmented__btn" data-shopcat="special">
-              특수 아이템
-            </button>
-          </div>
-
-          <div class="list" id="shopList"></div>
+        <div id="stableEmpty" class="empty">
+          <div class="empty__title">아직 말이 없어요 🐴</div>
+          <div class="empty__desc">하단 <b>뽑기</b> 탭에서 말을 뽑아 데려오세요.</div>
         </div>
-      </section>
 
-      <!-- 알바 -->
-      <section class="panel" id="panel-work" data-panel="work" hidden>
-        <div class="card">
-          <div class="card__header">
+        <div id="stableHorse" class="horse" hidden>
+          <div class="horse__top">
             <div>
-              <div class="card__title">알바</div>
-              <div class="card__sub">
-                AP 1 소모 / 1,000원~100,000원 랜덤 지급
+              <div class="horse__name">
+                <span id="horseName">이름없음</span>
+                <button class="chip" id="btnRenameHorse">이름 변경</button>
               </div>
+              <div class="horse__id" id="horseId">ID: -</div>
+              <div class="horse__id" id="horseGrade">등급: -</div>
             </div>
+            <div class="badge" id="winProbBadge" title="그랑프리 예상 우승 확률(참고용)">우승확률 -</div>
           </div>
 
-          <div class="workBox">
-            <div class="workBox__desc">
-              돈이 필요할 땐… 알바지 😇<br />
-              <span class="muted"
-                >※ 1,000원이 100,000원보다 100배 더 잘 뜸 (현실 반영…)</span
-              >
+          <div class="grid2">
+            <div class="stat">
+              <div class="stat__label">체력</div>
+              <div class="stat__value" id="statHp">0</div>
             </div>
-            <button class="btn btn--primary" id="btnWork">
-              알바하기 (AP 1)
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- 뽑기 -->
-      <section class="panel" id="panel-gacha" data-panel="gacha" hidden>
-        <div class="card">
-          <div class="card__header">
-            <div>
-              <div class="card__title">뽑기</div>
-              <div class="card__sub">말을 뽑아 데려오세요</div>
+            <div class="stat">
+              <div class="stat__label">말 기력</div>
+              <div class="stat__value" id="statVigor">0</div>
             </div>
-          </div>
-
-          <div class="gachaBox">
-            <div class="gachaBox__left">
-              <div class="gachaCost">뽑기 비용: <b>50,000원</b></div>
-              <div class="hint">
-                ※ 뽑기 → 확인(취소/계속) → 계속 누르면 상자가 흔들리고 자동 결과
-              </div>
+            <div class="stat">
+              <div class="stat__label">속도</div>
+              <div class="stat__value" id="statSpeed">0</div>
             </div>
-            <button class="btn btn--primary" id="btnGacha">말 뽑기</button>
-          </div>
-
-          <div class="gachaStage" id="gachaStage">
-            <div class="crate" id="crate">🎁</div>
-            <div class="gachaResult" id="gachaResult" hidden></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 그랑프리 -->
-      <section class="panel" id="panel-gp" data-panel="gp" hidden>
-        <div class="card">
-          <div class="card__header">
-            <div>
-              <div class="card__title">그랑프리</div>
-              <div class="card__sub">
-                AP 5 소모 / 메인컨디션 대신 우승확률 표시
-              </div>
-            </div>
-          </div>
-
-          <div class="gpBox">
-            <div class="gpRow">
-              <div>리그</div>
-              <div class="badge" id="gpLeague">루키</div>
-            </div>
-            <div class="gpRow">
-              <div>예상 우승 확률</div>
-              <div class="badge" id="gpProb">-</div>
-            </div>
-            <button class="btn btn--primary" id="btnGP">참가하기 (AP 5)</button>
-            <div class="hint">
-              ※ 말이 없으면 참가 불가 / 확률은 참고용(스탯+기본상태 기반)
+            <div class="stat">
+              <div class="stat__label">매력</div>
+              <div class="stat__value" id="statCharm">0</div>
             </div>
           </div>
 
           <div class="divider"></div>
 
-          <div class="card__title">경기 로그</div>
-          <div class="log" id="gpLog"></div>
+          <div class="grid3">
+            <div class="meter">
+              <div class="meter__label">포만감</div>
+              <div class="meter__bar"><div class="meter__fill" id="needSatiety"></div></div>
+              <div class="meter__num" id="needSatietyText">0/100</div>
+            </div>
+            <div class="meter">
+              <div class="meter__label">위생</div>
+              <div class="meter__bar"><div class="meter__fill" id="needHygiene"></div></div>
+              <div class="meter__num" id="needHygieneText">0/100</div>
+            </div>
+            <div class="meter">
+              <div class="meter__label">기분</div>
+              <div class="meter__bar"><div class="meter__fill" id="needMood"></div></div>
+              <div class="meter__num" id="needMoodText">0/100</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="card__title">인벤토리</div>
+          <div class="list" id="inventoryList"></div>
+          <div class="hint">※ 홀스부스터는 <b>오전 1회 / 오후 1회</b>만 사용 가능</div>
         </div>
-      </section>
-    </main>
-
-    <!-- 설정 버튼 (하단) -->
-    <button class="fab" id="btnSettings" aria-label="설정">⚙️</button>
-
-    <!-- 하단 탭 바 (fixed) -->
-    <nav class="bottomNav" role="navigation" aria-label="하단 탭">
-      <button class="bottomNav__item is-active" data-tab="stable">
-        마구간
-      </button>
-      <button class="bottomNav__item" data-tab="shop">상점</button>
-      <button class="bottomNav__item" data-tab="work">알바</button>
-      <button class="bottomNav__item" data-tab="gacha">뽑기</button>
-      <button class="bottomNav__item" data-tab="gp">그랑프리</button>
-    </nav>
-
-    <!-- 토스트 -->
-    <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
-
-    <!-- 모달 -->
-    <div class="modalOverlay" id="modalOverlay" hidden>
-      <div
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modalTitle"
-      >
-        <div class="modal__header">
-          <div class="modal__title" id="modalTitle">제목</div>
-        </div>
-        <div class="modal__body" id="modalBody"></div>
-        <div class="modal__actions" id="modalActions"></div>
       </div>
-    </div>
+    </section>
 
-    <script src="./game.js"></script>
-  </body>
+    <!-- 상점 -->
+    <section class="panel" id="panel-shop" data-panel="shop" hidden>
+      <div class="card">
+        <div class="card__header">
+          <div>
+            <div class="card__title">상점</div>
+            <div class="card__sub">아이템 구매 + 복권 구매</div>
+          </div>
+        </div>
+
+        <div class="shopTop">
+          <button class="btn" id="btnBuyLottery">복권 구매 (5,000원)</button>
+          <div class="hint">※ 복권은 즉시 결과가 나옵니다.</div>
+        </div>
+
+        <div class="segmented" role="tablist" aria-label="상점 탭">
+          <button class="segmented__btn is-active" data-shopcat="manage">관리 아이템</button>
+          <button class="segmented__btn" data-shopcat="growth">성장 아이템</button>
+          <button class="segmented__btn" data-shopcat="special">특수 아이템</button>
+        </div>
+
+        <div class="list" id="shopList"></div>
+      </div>
+    </section>
+
+    <!-- 알바 -->
+    <section class="panel" id="panel-work" data-panel="work" hidden>
+      <div class="card">
+        <div class="card__header">
+          <div>
+            <div class="card__title">알바</div>
+            <div class="card__sub">AP 1 소모 / 1,000원~100,000원 랜덤 지급</div>
+          </div>
+        </div>
+
+        <div class="workBox">
+          <div class="workBox__desc">
+            돈이 필요할 땐… 알바지 😇<br/>
+            <span class="muted">※ 1,000원이 100,000원보다 100배 더 잘 뜸</span>
+          </div>
+          <button class="btn btn--primary" id="btnWork">알바하기 (AP 1)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 뽑기 -->
+    <section class="panel" id="panel-gacha" data-panel="gacha" hidden>
+      <div class="card">
+        <div class="card__header">
+          <div>
+            <div class="card__title">뽑기</div>
+            <div class="card__sub">말을 뽑아 데려오세요</div>
+          </div>
+        </div>
+
+        <div class="gachaBox">
+          <div class="gachaBox__left">
+            <div class="gachaCost">뽑기 비용: <b>50,000원</b></div>
+            <div class="hint">※ 확인 → 계속 누르면 상자가 흔들리고 자동 결과</div>
+          </div>
+          <button class="btn btn--primary" id="btnGacha">말 뽑기</button>
+        </div>
+
+        <div class="gachaStage" id="gachaStage">
+          <div class="crate" id="crate">🎁</div>
+          <div class="gachaResult" id="gachaResult" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 그랑프리 -->
+    <section class="panel" id="panel-gp" data-panel="gp" hidden>
+      <div class="card">
+        <div class="card__header">
+          <div>
+            <div class="card__title">그랑프리</div>
+            <div class="card__sub">AP 5 소모 / 우승확률 표시</div>
+          </div>
+        </div>
+
+        <div class="gpBox">
+          <div class="gpRow">
+            <div>리그</div>
+            <div class="badge" id="gpLeague">루키</div>
+          </div>
+          <div class="gpRow">
+            <div>예상 우승 확률</div>
+            <div class="badge" id="gpProb">-</div>
+          </div>
+          <button class="btn btn--primary" id="btnGP">참가하기 (AP 5)</button>
+          <div class="hint">※ 말이 없으면 참가 불가 / 확률은 참고용</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="card__title">경기 로그</div>
+        <div class="log" id="gpLog"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 설정 버튼 (하단) -->
+  <button class="fab" id="btnSettings" aria-label="설정">⚙️</button>
+
+  <!-- 하단 탭 바 (fixed) -->
+  <nav class="bottomNav" role="navigation" aria-label="하단 탭">
+    <button class="bottomNav__item is-active" data-tab="stable">마구간</button>
+    <button class="bottomNav__item" data-tab="shop">상점</button>
+    <button class="bottomNav__item" data-tab="work">알바</button>
+    <button class="bottomNav__item" data-tab="gacha">뽑기</button>
+    <button class="bottomNav__item" data-tab="gp">그랑프리</button>
+  </nav>
+
+  <!-- 토스트 -->
+  <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- 모달 -->
+  <div class="modalOverlay" id="modalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal__header">
+        <div class="modal__title" id="modalTitle">제목</div>
+      </div>
+      <div class="modal__body" id="modalBody"></div>
+      <div class="modal__actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <!-- ✅ 파일명 game.js -->
+  <script src="./game.js"></script>
+</body>
 </html>
