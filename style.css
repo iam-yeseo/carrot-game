@@ -362,6 +362,10 @@ button, a, input { touch-action: manipulation; }
   padding: 14px;
   z-index: 100;
 }
+/* hidden 속성이 CSS에 의해 무시되지 않도록 강제 */
+.modalOverlay[hidden] { 
+  display: none !important; 
+}
 .modal {
   width: min(520px, 100%);
   border-radius: 18px;
